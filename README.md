@@ -32,5 +32,9 @@ Options:
 Note that the options can also be set from environment variables prefixes with `XMTP_`, e.g.
 
 ```
-XMTP_ADDRESS=0x.... npm start contacts list
+$ export XMTP_ADDRESS=0x....
+$ export XMPT_ENV=production
+$ npm start contacts list
+$ npm start intros list
+$ ...
 ```
