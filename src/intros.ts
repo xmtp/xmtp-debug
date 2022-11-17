@@ -1,7 +1,9 @@
 import { Client, SortDirection, PublicKey, PublicKeyBundle, SignedPublicKeyBundle } from '@xmtp/xmtp-js'
+// @ts-ignore
 import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
+// @ts-ignore
+import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
 import Long from 'long'
-import { MessageV1 } from '@xmtp/xmtp-js/dist/types/src/Message'
 import { fetcher } from '@xmtp/proto'
 const { b64Decode } = fetcher
 

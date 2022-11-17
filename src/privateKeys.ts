@@ -1,5 +1,6 @@
 import { Client } from '@xmtp/xmtp-js'
-import { buildUserPrivateStoreTopic, nsToDate } from '@xmtp/xmtp-js/dist/types/src/utils'
+// @ts-ignore
+import { buildUserPrivateStoreTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 import Long from 'long'
 
 export default async function privateKeys(client: Client, address: string) {

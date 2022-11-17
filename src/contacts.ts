@@ -1,7 +1,10 @@
 import { Client, SignedPublicKeyBundle, SortDirection, PublicKeyBundle } from '@xmtp/xmtp-js'
+// @ts-ignore
 import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
-import { decodeContactBundle } from '@xmtp/xmtp-js/dist/types/src/ContactBundle'
-import { bytesToHex } from '@xmtp/xmtp-js/dist/types/src/crypto/utils'
+// @ts-ignore
+import { decodeContactBundle } from '@xmtp/xmtp-js/dist/cjs/src/ContactBundle'
+// @ts-ignore
+import { bytesToHex } from '@xmtp/xmtp-js/dist/cjs/src/crypto/utils'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 const { b64Decode } = fetcher
