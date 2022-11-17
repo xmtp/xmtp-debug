@@ -10,9 +10,10 @@ import {
 import intros from './intros'
 import contacts from './contacts'
 import privateKeys from './privateKeys'
+import invites from './invites'
 
 yargs(hideBin(process.argv))
-  .command('init', 'Initialize wallet', {}, async (argv: any) => {
+  .command('init', 'initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     saveRandomWallet()
     const client = await Client.create(loadWallet(), { env })
@@ -34,7 +35,20 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
-    'contacts [cmd][address]',
+    'invites [cmd] [address]',
+    'list/check introductions for the address',
+    { 
+      cmd: { type: 'string', choices: ['check', 'list'], default: 'list'},
+      address: { type: 'string' },
+    },
+    async (argv: any) => {
+      const { env, cmd, address } = argv
+      const client = await Client.create(loadWallet(), { env })
+      await invites(client, cmd, await resolveAddress(address))
+    }
+  )
+  .command(
+    'contacts [cmd] [address]',
     'list/check published contacts for the address',
     { 
       cmd: { type: 'string', choices: ['check', 'list'], default: 'list'},

@@ -28,11 +28,16 @@ export const truncateEthAddress = (address: string) => {
 
 export async function resolveAddress(address: string): Promise<string> {
   if (address.startsWith('0x')) {
-    return utils.getAddress(address)
+    return resolvedAddress(utils.getAddress(address))
   }
   if (address.endsWith('.eth')) {
-    const resolved = await ethers.getDefaultProvider().resolveName(address)
-    if(resolved) { return resolved}
+    const resolved = await new ethers.providers.CloudflareProvider().resolveName(address)
+    if(resolved) { return resolvedAddress(resolved) }
   }
   throw new Error(`Invalid address: ${address}`)
+}
+
+function resolvedAddress(address: string): string {
+  console.log(`Resolved address: ${address}`)
+  return address
 }

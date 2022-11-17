@@ -4,6 +4,7 @@ Simple CLI tool for inspecting data on XMTP networks.
 
 1. clone this repository
 2. run `npm install`
+3. run `npm start init`
 
 # Usage
 
@@ -29,10 +30,16 @@ Options:
   -a, --address  wallet address to inspect                              [string]
 ```
 
-Note that the options can also be set from environment variables prefixes with `XMTP_`, e.g.
+For example
 
 ```
-$ export XMTP_ADDRESS=0x....
+npm start contacts list xmtp.eth
+```
+
+Note that the options can also be set from environment variables prefixed with `XMTP_`, e.g.
+
+```
+$ export XMTP_ADDRESS=xmtp.eth
 $ export XMPT_ENV=production
 $ npm start contacts list
 $ npm start intros list
