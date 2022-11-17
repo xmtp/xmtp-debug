@@ -21,11 +21,11 @@ yargs(hideBin(process.argv))
     )
   })
   .command(
-    'intros <cmd> <address>',
+    'intros [cmd] [address]',
     'list/check introduction messages for the address',
     { 
       cmd: { type: 'string', choices: ['check', 'list'], default: 'list'},
-      address: { type: 'string', demand: true },
+      address: { type: 'string' },
     },
     async (argv: any) => {
       const { env, cmd, address } = argv
@@ -34,11 +34,11 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
-    'contacts <cmd> <address>',
+    'contacts [cmd][address]',
     'list/check published contacts for the address',
     { 
       cmd: { type: 'string', choices: ['check', 'list'], default: 'list'},
-      address: { type: 'string', demand: true },
+      address: { type: 'string' },
     },
     async (argv: any) => {
       const { env, cmd, address } = argv
@@ -47,10 +47,10 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
-    'private <address>',
+    'private [address]',
     'list published private key bundles for the address',
     { 
-      address: { type: 'string', demand: true },
+      address: { type: 'string' },
     },
     async (argv: any) => {
       const { env, address } = argv
@@ -64,6 +64,11 @@ yargs(hideBin(process.argv))
     default: 'dev',
     choices: ['dev', 'production'] as const,
     description: 'The XMTP environment to use',
+  })
+  .option('address', {
+    alias: 'a',
+    type: 'string',
+    description: 'wallet address to inspect'
   })
   .env('XMTP') // all options can be passed in as env vars prefixed with XMTP_
   .demandCommand(1)

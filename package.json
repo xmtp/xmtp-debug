@@ -6,13 +6,13 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rm -rf ./dist",
-    "run": "node ./dist/index.js",
-    "prerun": "npm run build",
+    "start": "node ./dist/index.js",
+    "prestart": "npm run build",
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "xmtp": "./xmtp"
+    "xmtp": "node ./dist/index.js"
   },
   "repository": {
     "type": "git",
