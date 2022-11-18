@@ -18,14 +18,14 @@ export default async function invites(client: Client, cmd: string, address: stri
 }
 
 async function list(invites: SealedInvitation[]) {
-    console.log('date sender => recipient')
+    let rows = []
     for(const invite of invites) {
         const header = invite.v1.header
-        console.log(
-            nsToDate(header.createdNs),
-            truncateEthAddress(await header.sender.walletSignatureAddress()),
-            '=>',
-            truncateEthAddress(await header.recipient.walletSignatureAddress()),
-        )
+        rows.push({
+        date: nsToDate(header.createdNs),
+        sender: truncateEthAddress(await header.sender.walletSignatureAddress()),
+        recipient: truncateEthAddress(await header.recipient.walletSignatureAddress()),
+    })
     }
+    console.table(rows)
 }

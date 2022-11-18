@@ -9,6 +9,11 @@ import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 const { b64Decode } = fetcher
 
+type Contact = {
+  timestamp: Date,
+  contact: PublicKeyBundle | SignedPublicKeyBundle
+}
+
 export default async function contacts(client: Client, cmd: string, address: string) {
     const contacts = await client.listEnvelopes(
       [buildUserContactTopic(address)],
@@ -25,6 +30,15 @@ export default async function contacts(client: Client, cmd: string, address: str
       },
       { direction: SortDirection.SORT_DIRECTION_ASCENDING }
     )
+    switch(cmd){
+      case 'list': await list(contacts); break;
+      case 'check': await check(contacts); break;
+      default: console.log(`invalid command ${cmd}`)
+      }
+    }
+
+  async function list(contacts: Contact[]) {
+    let rows = []
     for (const { timestamp, contact } of contacts) {
       const type =
         contact instanceof PublicKeyBundle
@@ -32,13 +46,47 @@ export default async function contacts(client: Client, cmd: string, address: str
           : contact instanceof SignedPublicKeyBundle
           ? 'V2'
           : typeof contact
-      console.log(
-        timestamp,
-        type,
-        bytesToHex(contact.identityKey.secp256k1Uncompressed.bytes)
-          .slice(0, 10)
-        // utils.bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
-      )
+      const identityKey = bytesToHex(contact.identityKey.secp256k1Uncompressed.bytes)
+      const preKey = bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
+      rows.push({
+        date: timestamp,
+        type: type,
+        identityKey: truncateHex(identityKey),
+        preKey: truncateHex(preKey)
+      })
     }
+    console.table(rows)
   }
-  
+
+async function check(contacts: Contact[]) {
+  let lastContact: Contact | null = null
+  let numMismatched = 0
+  let numContacts = 0
+  for (const contact of contacts) {
+    numContacts++
+    if (lastContact && !equal(lastContact, contact)) {
+      console.log(
+        'Contact changed',
+        contact.timestamp
+      )
+      numMismatched++
+    }
+    lastContact = contact
+  }
+  console.log(
+    `Number of contacts: ${numContacts}. Mismatched: ${numMismatched}`
+  )
+}
+
+function equal(a: Contact, b: Contact): boolean {
+  return a.contact instanceof PublicKeyBundle
+  ? b.contact instanceof PublicKeyBundle ?
+      a.contact.equals(b.contact):false
+  : b.contact instanceof SignedPublicKeyBundle ?
+      a.contact.equals(b.contact): false
+}
+
+function truncateHex(hex: string): string {
+  if(hex.length < 8) { return hex }
+  return `${hex.slice(0,4)}…${hex.slice(-4)}`
+}

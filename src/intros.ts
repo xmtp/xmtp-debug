@@ -5,6 +5,7 @@ import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
+import { truncateEthAddress } from './utils'
 const { b64Decode } = fetcher
 
 export default async function intros(client: Client, cmd: string, address: string) {
@@ -37,7 +38,17 @@ export default async function intros(client: Client, cmd: string, address: strin
     }
 }
 
-async function list(intros: { timestamp: Date, message: MessageV1 }[], currentContact: PublicKeyBundle) { 
+async function list(intros: { timestamp: Date, message: MessageV1 }[], currentContact: PublicKeyBundle) {
+  let rows = []
+  for(const intro of intros) {
+    const message = intro.message
+    rows.push({
+      date: intro.timestamp,
+      sender: message.senderAddress ? truncateEthAddress(message.senderAddress) : 'undefined',
+      recipient: message.recipientAddress ? truncateEthAddress(message.recipientAddress) : 'undefined'
+  })
+  }
+  console.table(rows)
 }
 
 async function check(intros: { timestamp: Date, message: MessageV1 }[], currentContact: PublicKeyBundle) { 
