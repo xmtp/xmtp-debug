@@ -27,6 +27,7 @@ export const truncateEthAddress = (address: string) => {
 }
 
 export async function resolveAddress(address: string): Promise<string> {
+  if(!address) {throw new Error(`missing address`)}
   if (address.startsWith('0x')) {
     return resolvedAddress(utils.getAddress(address))
   }

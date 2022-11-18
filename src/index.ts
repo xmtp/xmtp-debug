@@ -88,6 +88,9 @@ yargs(hideBin(process.argv))
     type: 'string',
     description: 'wallet address to inspect'
   })
-  .env('XMTP') // all options can be passed in as env vars prefixed with XMTP_
+  // all options can be passed in as env vars prefixed with XMTP_
+  .env('XMTP')
+  // log the network environment used
+  .middleware(argv => console.log(`XMTP environment: ${argv.env}`))
   .demandCommand(1)
   .parse()
