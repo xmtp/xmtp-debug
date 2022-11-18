@@ -13,6 +13,7 @@ import privateKeys from './privateKeys'
 import invites from './invites'
 
 yargs(hideBin(process.argv))
+  .scriptName(`npm start`)
   .command('init', 'initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     saveRandomWallet()
@@ -34,6 +35,7 @@ yargs(hideBin(process.argv))
       await intros(client, cmd, await resolveAddress(address))
     }
   )
+  .example('$0 intros list xmtp.eth', 'list all introduction messages for xmtp.eth')
   .command(
     'invites [cmd] [address]',
     'list/check introductions for the address',
@@ -47,6 +49,7 @@ yargs(hideBin(process.argv))
       await invites(client, cmd, await resolveAddress(address))
     }
   )
+  .example('$0 invites list xmtp.eth', 'list all invitations for xmtp.eth')
   .command(
     'contacts [cmd] [address]',
     'list/check published contacts for the address',
@@ -60,6 +63,7 @@ yargs(hideBin(process.argv))
       await contacts(client, cmd, await resolveAddress(address))
     }
   )
+  .example('$0 contacts check xmtp.eth', 'check all contacts of xmtp.eth for anomalies')
   .command(
     'private [address]',
     'list published private key bundles for the address',
