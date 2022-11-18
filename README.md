@@ -1,5 +1,7 @@
 Simple CLI tool for inspecting data on XMTP networks.
 
+To understand what you are inspecting please refer to https://xmtp.org/docs/dev-concepts/architectural-overview
+
 # Installation
 
 1. clone this repository
