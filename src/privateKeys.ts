@@ -6,12 +6,8 @@ import Long from 'long'
 export default async function privateKeys(client: Client, address: string) {
     const timestamps = await client.listEnvelopes(
       [buildUserPrivateStoreTopic(`${address}/key_bundle`)],
-      async (env) => nsToDate(Long.fromString(env.timestampNs as string))
+      async (env) => {return { date: nsToDate(Long.fromString(env.timestampNs as string)) }}
     )
   
-    console.log(
-      `PrivateStore has ${timestamps.length} entries\n${JSON.stringify(
-        timestamps
-      )}`
-    )
+    console.table(timestamps)
   }
