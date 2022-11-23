@@ -49,26 +49,25 @@ function resolvedAddress(address: string): string {
 
 export function toListOptions(argv: any) {
   const options: ListMessagesOptions = {
-    direction: argv.descending
+    direction: argv.desc
       ? SortDirection.SORT_DIRECTION_DESCENDING
       : SortDirection.SORT_DIRECTION_ASCENDING
   }
   if(argv.start){
-    const start = parser.fromString(argv.start)
-    if(start)
-      console.log(`Starting on ${start}`)
-      options.startTime = start
+      options.startTime = parseDate(argv.start, "Starting on")
   }
   if(argv.end){
-    const end = parser.fromString(argv.end)
-    if (end) {
-      console.log(`Ending on ${end}`)
-      options.endTime = end
-    }
+    options.endTime = parseDate(argv.end, "Ending on")
   }
   if(argv.limit) {
     console.log(`Limited to ${argv.limit}`)
     options.limit = argv.limit
   }
   return options
+}
+
+function parseDate(input: string, msg?: string) {
+  const parsed = parser.fromString(input)
+  console.log(msg, parsed)
+  return parsed instanceof Date ? parsed : undefined
 }

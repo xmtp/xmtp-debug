@@ -48,6 +48,23 @@ Examples:
   check xmtp.eth                            anomalies on the production network
 ```
 
+Example Output
+
+```
+xmtp-debug % npm start --silent -- --env=production --end='3 weeks ago' --desc --limit=3 contacts list hi.xmtp.eth
+XMTP environment: production
+Resolved address: 0x194c31cAe1418D5256E8c58e0d08Aee1046C6Ed0
+Ending on 2022-11-02T20:12:16.010Z
+Limited to 3
+┌─────────┬──────────────────────────┬──────┬─────────────┬─────────────┐
+│ (index) │           date           │ type │ identityKey │   preKey    │
+├─────────┼──────────────────────────┼──────┼─────────────┼─────────────┤
+│    0    │ 2022-11-01T21:38:14.409Z │ 'V1' │ '044f…7b1a' │ '04d2…4f8c' │
+│    1    │ 2022-10-28T18:24:13.305Z │ 'V1' │ '044f…7b1a' │ '04d2…4f8c' │
+│    2    │ 2022-10-28T18:14:20.502Z │ 'V1' │ '044f…7b1a' │ '04d2…4f8c' │
+└─────────┴──────────────────────────┴──────┴─────────────┴─────────────┘
+```
+
 Note that the options can also be set from environment variables prefixed with `XMTP_`, e.g.
 
 ```sh
