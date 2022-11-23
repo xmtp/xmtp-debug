@@ -1,4 +1,4 @@
-import { Client, SignedPublicKeyBundle, SortDirection, PublicKeyBundle } from '@xmtp/xmtp-js'
+import { SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
 // @ts-ignore
 import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 // @ts-ignore
@@ -7,6 +7,7 @@ import { decodeContactBundle } from '@xmtp/xmtp-js/dist/cjs/src/ContactBundle'
 import { bytesToHex } from '@xmtp/xmtp-js/dist/cjs/src/crypto/utils'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
+import { toListOptions } from './utils'
 const { b64Decode } = fetcher
 
 type Contact = {
@@ -29,7 +30,7 @@ export default async function contacts(argv: any) {
           ),
         }
       },
-      { direction: SortDirection.SORT_DIRECTION_ASCENDING }
+      toListOptions(argv)
     )
     switch(cmd){
       case 'list': await list(contacts, !long); break;

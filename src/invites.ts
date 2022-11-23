@@ -3,7 +3,7 @@ import { Client } from '@xmtp/xmtp-js'
 import { SealedInvitation } from '@xmtp/xmtp-js/dist/cjs/src/Invitation'
 // @ts-ignore
 import { buildUserInviteTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
-import { truncateEthAddress } from './utils'
+import { toListOptions, truncateEthAddress } from './utils'
 
 
 export default async function invites(argv: any) {
@@ -11,6 +11,7 @@ export default async function invites(argv: any) {
     const invites = await client.listEnvelopes(
         [buildUserInviteTopic(address)],
         SealedInvitation.fromEnvelope,
+        toListOptions(argv)
     )
     switch(cmd){
     case 'list': await list(invites, !long); break

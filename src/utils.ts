@@ -1,5 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { ethers, Wallet, utils } from 'ethers'
+import { ListMessagesOptions, SortDirection } from '@xmtp/xmtp-js'
+
+const parser = require('any-date-parser')
 
 // Make sure this is in .gitignore
 export const WALLET_FILE_LOCATION = './xmtp_wallet'
@@ -42,4 +45,30 @@ export async function resolveAddress(address: string): Promise<string> {
 function resolvedAddress(address: string): string {
   console.log(`Resolved address: ${address}`)
   return address
+}
+
+export function toListOptions(argv: any) {
+  const options: ListMessagesOptions = {
+    direction: argv.descending
+      ? SortDirection.SORT_DIRECTION_DESCENDING
+      : SortDirection.SORT_DIRECTION_ASCENDING
+  }
+  if(argv.start){
+    const start = parser.fromString(argv.start)
+    if(start)
+      console.log(`Starting on ${start}`)
+      options.startTime = start
+  }
+  if(argv.end){
+    const end = parser.fromString(argv.end)
+    if (end) {
+      console.log(`Ending on ${end}`)
+      options.endTime = end
+    }
+  }
+  if(argv.limit) {
+    console.log(`Limited to ${argv.limit}`)
+    options.limit = argv.limit
+  }
+  return options
 }

@@ -1,4 +1,4 @@
-import yargs from 'yargs'
+import yargs, { number } from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import { Client } from '@xmtp/xmtp-js'
 import {
@@ -34,6 +34,7 @@ yargs(hideBin(process.argv))
     }
   )
   .example('$0 intros list xmtp.eth', 'list all introduction messages for xmtp.eth')
+  .example('$0 -- -d -l10 intros list xmtp.eth', 'list last 10 introduction messages for xmtp.eth in descending order')
   .command(
     'invites [cmd] [address]',
     'list/check introductions for the address',
@@ -45,7 +46,7 @@ yargs(hideBin(process.argv))
       await invites(await resolve(argv))
     }
   )
-  .example('$0 invites -- --long list xmtp.eth', 'list all invitations for xmtp.eth, do not shorten addresses')
+  .example('$0 -- --full invites list xmtp.eth', 'list all invitations for xmtp.eth, do not shorten addresses')
   .command(
     'contacts [cmd] [address]',
     'list/check published contacts for the address',
@@ -57,7 +58,7 @@ yargs(hideBin(process.argv))
       await contacts(await resolve(argv))
     }
   )
-  .example('$0 contacts -- --env=production check xmtp.eth', 'check all contacts of xmtp.eth for anomalies on the production network')
+  .example('$0 -- -e=production contacts check xmtp.eth', 'check all contacts of xmtp.eth for anomalies on the production network')
   .command(
     'private [address]',
     'list published private key bundles for the address',
@@ -80,11 +81,31 @@ yargs(hideBin(process.argv))
     type: 'string',
     description: 'wallet address to inspect'
   })
-  .option('long', {
-    alias: 'l',
+  .option('full', {
+    alias: 'f',
     type: 'boolean',
     default: false,
-    description: 'do not shorten addresses'
+    description: 'do not shorten long output items'
+  })
+  .option('start', {
+    alias: 's',
+    type: 'string',
+    description: 'restrict output to dates on or after this date'
+  })
+  .option('end', {
+    alias: 'n',
+    type: 'string',
+    description: 'restrict output to dates before this date'
+  })
+  .option('limit', {
+    alias: 'l',
+    type: 'number',
+    description: 'restrict output to first <limit> entries'
+  })
+  .option('desc', {
+    alias: 'd',
+    type: 'boolean',
+    description: 'sort output in descending order'
   })
   // all options can be passed in as env vars prefixed with XMTP_
   .env('XMTP')

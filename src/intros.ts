@@ -1,11 +1,11 @@
-import { Client, SortDirection, PublicKey, PublicKeyBundle, SignedPublicKeyBundle } from '@xmtp/xmtp-js'
+import { SortDirection, PublicKey, PublicKeyBundle, SignedPublicKeyBundle } from '@xmtp/xmtp-js'
 // @ts-ignore
 import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 // @ts-ignore
 import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
-import { truncateEthAddress } from './utils'
+import { toListOptions, truncateEthAddress } from './utils'
 const { b64Decode } = fetcher
 
 export default async function intros(argv: any) {
@@ -30,7 +30,7 @@ export default async function intros(argv: any) {
           ),
         }
       },
-      { direction: SortDirection.SORT_DIRECTION_ASCENDING }
+      toListOptions(argv)
     )
     switch(cmd){
     case 'check': await check(intros, currentContact); break

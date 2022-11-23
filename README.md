@@ -31,14 +31,20 @@ Options:
   -e, --env      The XMTP environment to use
                         [string] [choices: "dev", "production"] [default: "dev"]
   -a, --address  wallet address to inspect                              [string]
-  -l, --long     do not shorten addresses             [boolean] [default: false]
+  -f, --full     do not shorten long output items     [boolean] [default: false]
+  -s, --start    restrict output to dates on or after this date         [string]
+  -n, --end      restrict output to dates before this date              [string]
+  -l, --limit    restrict output to first <limit> entries               [number]
+  -d, --desc     sort output in descending order                       [boolean]
 
 Examples:
   npm start intros list xmtp.eth            list all introduction messages for
                                             xmtp.eth
-  npm start invites -- --long list          list all invitations for xmtp.eth,
+  npm start -- -d -l10 intros list          list last 10 introduction messages
+  xmtp.eth                                  for xmtp.eth in descending order
+  npm start -- --full invites list          list all invitations for xmtp.eth,
   xmtp.eth                                  do not shorten addresses
-  npm start contacts -- --env=production    check all contacts of xmtp.eth for
+  npm start -- -e=production contacts       check all contacts of xmtp.eth for
   check xmtp.eth                            anomalies on the production network
 ```
 
