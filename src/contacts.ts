@@ -14,10 +14,11 @@ type Contact = {
   contact: PublicKeyBundle | SignedPublicKeyBundle
 }
 
-export default async function contacts(client: Client, cmd: string, address: string) {
+export default async function contacts(argv: any) {
+    const {client, cmd, address, long} = argv
     const contacts = await client.listEnvelopes(
       [buildUserContactTopic(address)],
-      async (env) => {
+      async (env: any) => {
         if (!env.message) {
           throw new Error('No message')
         }
@@ -31,13 +32,13 @@ export default async function contacts(client: Client, cmd: string, address: str
       { direction: SortDirection.SORT_DIRECTION_ASCENDING }
     )
     switch(cmd){
-      case 'list': await list(contacts); break;
+      case 'list': await list(contacts, !long); break;
       case 'check': await check(contacts); break;
       default: console.log(`invalid command ${cmd}`)
       }
     }
 
-  async function list(contacts: Contact[]) {
+  async function list(contacts: Contact[], shouldTruncate = true) {
     let rows = []
     for (const { timestamp, contact } of contacts) {
       const type =
@@ -51,8 +52,8 @@ export default async function contacts(client: Client, cmd: string, address: str
       rows.push({
         date: timestamp,
         type: type,
-        identityKey: truncateHex(identityKey),
-        preKey: truncateHex(preKey)
+        identityKey: truncateHex(identityKey, shouldTruncate),
+        preKey: truncateHex(preKey, shouldTruncate)
       })
     }
     console.table(rows)
@@ -86,7 +87,8 @@ function equal(a: Contact, b: Contact): boolean {
       a.contact.equals(b.contact): false
 }
 
-function truncateHex(hex: string): string {
+function truncateHex(hex: string, shouldTruncate = true): string {
+  if(!shouldTruncate) { return hex }
   if(hex.length < 8) { return hex }
   return `${hex.slice(0,4)}…${hex.slice(-4)}`
 }

@@ -29,10 +29,8 @@ yargs(hideBin(process.argv))
       cmd: { type: 'string', choices: ['check', 'list'], default: 'list'},
       address: { type: 'string' },
     },
-    async (argv: any) => {
-      const { env, cmd, address } = argv
-      const client = await Client.create(loadWallet(), { env })
-      await intros(client, cmd, await resolveAddress(address))
+    async (argv: yargs.Arguments) => {
+      await intros(await resolve(argv))
     }
   )
   .example('$0 intros list xmtp.eth', 'list all introduction messages for xmtp.eth')
@@ -44,12 +42,10 @@ yargs(hideBin(process.argv))
       address: { type: 'string' },
     },
     async (argv: any) => {
-      const { env, cmd, address } = argv
-      const client = await Client.create(loadWallet(), { env })
-      await invites(client, cmd, await resolveAddress(address))
+      await invites(await resolve(argv))
     }
   )
-  .example('$0 invites list xmtp.eth', 'list all invitations for xmtp.eth')
+  .example('$0 invites -- --long list xmtp.eth', 'list all invitations for xmtp.eth, do not shorten addresses')
   .command(
     'contacts [cmd] [address]',
     'list/check published contacts for the address',
@@ -58,12 +54,10 @@ yargs(hideBin(process.argv))
       address: { type: 'string' },
     },
     async (argv: any) => {
-      const { env, cmd, address } = argv
-      const client = await Client.create(loadWallet(), { env })
-      await contacts(client, cmd, await resolveAddress(address))
+      await contacts(await resolve(argv))
     }
   )
-  .example('$0 contacts check xmtp.eth', 'check all contacts of xmtp.eth for anomalies')
+  .example('$0 contacts -- --env=production check xmtp.eth', 'check all contacts of xmtp.eth for anomalies on the production network')
   .command(
     'private [address]',
     'list published private key bundles for the address',
@@ -71,9 +65,7 @@ yargs(hideBin(process.argv))
       address: { type: 'string' },
     },
     async (argv: any) => {
-      const { env, address } = argv
-      const client = await Client.create(loadWallet(), { env })
-      await privateKeys(client, await resolveAddress(address))
+      await privateKeys(await resolve(argv))
     }
   )
   .option('env', {
@@ -88,9 +80,22 @@ yargs(hideBin(process.argv))
     type: 'string',
     description: 'wallet address to inspect'
   })
+  .option('long', {
+    alias: 'l',
+    type: 'boolean',
+    default: false,
+    description: 'do not shorten addresses'
+  })
   // all options can be passed in as env vars prefixed with XMTP_
   .env('XMTP')
   // log the network environment used
   .middleware(argv => console.log(`XMTP environment: ${argv.env}`))
   .demandCommand(1)
   .parse()
+
+async function resolve(argv: any) {
+  const { env, address } = argv
+  argv.client = await Client.create(loadWallet(), { env })
+  argv.address = await resolveAddress(address)
+  return argv
+}

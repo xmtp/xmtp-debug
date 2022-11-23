@@ -8,7 +8,8 @@ import { fetcher } from '@xmtp/proto'
 import { truncateEthAddress } from './utils'
 const { b64Decode } = fetcher
 
-export default async function intros(client: Client, cmd: string, address: string) {
+export default async function intros(argv: any) {
+  const {client, cmd, address, long} = argv
   let currentContact = await client.getUserContact(address)
   if (!currentContact) {
     throw new Error('No contact for address ${address}')
@@ -18,7 +19,7 @@ export default async function intros(client: Client, cmd: string, address: strin
   }
     const intros = await client.listEnvelopes(
       [buildUserIntroTopic(address)],
-      async (env) => {
+      async (env: any) => {
         if (!env.message) {
           throw new Error('No message')
         }
@@ -33,19 +34,19 @@ export default async function intros(client: Client, cmd: string, address: strin
     )
     switch(cmd){
     case 'check': await check(intros, currentContact); break
-    case 'list': await list(intros, currentContact); break
+    case 'list': await list(intros, !long); break
     default: console.log(`invalid command ${cmd}`)
     }
 }
 
-async function list(intros: { timestamp: Date, message: MessageV1 }[], currentContact: PublicKeyBundle) {
+async function list(intros: { timestamp: Date, message: MessageV1 }[], shouldTruncate = true) {
   let rows = []
   for(const intro of intros) {
     const message = intro.message
     rows.push({
       date: intro.timestamp,
-      sender: message.senderAddress ? truncateEthAddress(message.senderAddress) : 'undefined',
-      recipient: message.recipientAddress ? truncateEthAddress(message.recipientAddress) : 'undefined'
+      sender: message.senderAddress ? truncateEthAddress(message.senderAddress, shouldTruncate) : 'undefined',
+      recipient: message.recipientAddress ? truncateEthAddress(message.recipientAddress, shouldTruncate) : 'undefined'
   })
   }
   console.table(rows)

@@ -31,17 +31,20 @@ Options:
   -e, --env      The XMTP environment to use
                         [string] [choices: "dev", "production"] [default: "dev"]
   -a, --address  wallet address to inspect                              [string]
+  -l, --long     do not shorten addresses             [boolean] [default: false]
 
 Examples:
-  npm start intros list xmtp.eth     list all introduction messages for xmtp.eth
-  npm start invites list xmtp.eth    list all invitations for xmtp.eth
-  npm start contacts check xmtp.eth  check all contacts of xmtp.eth for
-                                     anomalies
+  npm start intros list xmtp.eth            list all introduction messages for
+                                            xmtp.eth
+  npm start invites -- --long list          list all invitations for xmtp.eth,
+  xmtp.eth                                  do not shorten addresses
+  npm start contacts -- --env=production    check all contacts of xmtp.eth for
+  check xmtp.eth                            anomalies on the production network
 ```
 
 Note that the options can also be set from environment variables prefixed with `XMTP_`, e.g.
 
-```
+```sh
 $ export XMTP_ADDRESS=xmtp.eth
 $ export XMPT_ENV=production
 $ npm start contacts list
