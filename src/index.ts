@@ -73,7 +73,7 @@ yargs(hideBin(process.argv))
     alias: 'e',
     type: 'string',
     default: 'dev',
-    choices: ['dev', 'production'] as const,
+    choices: ['local', 'dev', 'production'] as const,
     description: 'The XMTP environment to use',
   })
   .option('address', {
@@ -120,3 +120,4 @@ async function resolve(argv: any) {
   argv.address = await resolveAddress(address)
   return argv
 }
+
