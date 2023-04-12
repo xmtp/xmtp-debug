@@ -3,6 +3,7 @@ import {
   PublicKey,
   PublicKeyBundle,
   SignedPublicKeyBundle,
+  Client,
 } from '@xmtp/xmtp-js'
 // @ts-ignore
 import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
@@ -13,17 +14,24 @@ import { fetcher } from '@xmtp/proto'
 import { toListOptions, truncateEthAddress } from './utils'
 const { b64Decode } = fetcher
 
-export default async function intros(argv: any) {
+export default async function intros(argv: {
+  client: Client
+  cmd: string
+  address: string
+  long: boolean
+}) {
   const { client, cmd, address, long } = argv
   let currentContact = await client.getUserContact(address)
+  console.log('Got current contact')
   if (!currentContact) {
     throw new Error('No contact for address ${address}')
   }
   if (currentContact instanceof SignedPublicKeyBundle) {
+    console.log('Is signed')
     currentContact = currentContact.toLegacyBundle()
   }
   const intros = await client.listEnvelopes(
-    [buildUserIntroTopic(address)],
+    buildUserIntroTopic(address),
     async (env: any) => {
       if (!env.message) {
         throw new Error('No message')

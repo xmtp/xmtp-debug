@@ -1,8 +1,8 @@
 import { SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
-// @ts-ignore
 import {
   buildUserContactTopic,
   nsToDate,
+  // @ts-ignore
 } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 // @ts-ignore
 import { decodeContactBundle } from '@xmtp/xmtp-js/dist/cjs/src/ContactBundle'
@@ -21,7 +21,7 @@ type Contact = {
 export default async function contacts(argv: any) {
   const { client, cmd, address, long } = argv
   const contacts = await client.listEnvelopes(
-    [buildUserContactTopic(address)],
+    buildUserContactTopic(address),
     async (env: any) => {
       if (!env.message) {
         throw new Error('No message')

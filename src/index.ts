@@ -12,6 +12,7 @@ import intros from './intros'
 import contacts from './contacts'
 import privateKeys from './privateKeys'
 import invites from './invites'
+import fillConversationList from './fillConversationList'
 
 yargs(hideBin(process.argv))
   .scriptName(`npm start`)
@@ -82,6 +83,20 @@ yargs(hideBin(process.argv))
       await privateKeys(await resolve(argv))
     }
   )
+  .command(
+    'fill-conversation-list [address] [numInvites] [numMessagesPerConvo]',
+    `Fill the targeted address with the specified number of conversation invites.
+    
+    numInvites * numMessagesPerConvo should be < 499 to avoid rate limiting`,
+    {
+      address: { type: 'string' },
+      numInvites: { type: 'number' },
+      numMessagesPerConvo: { type: 'number', default: 0 },
+    },
+    async (argv) => {
+      await fillConversationList(argv)
+    }
+  )
   .option('env', {
     alias: 'e',
     type: 'string',
@@ -120,30 +135,6 @@ yargs(hideBin(process.argv))
     type: 'boolean',
     description: 'sort output in descending order',
   })
-  .command(
-    'fill-conversation-list [address] [numInvites] [numMessagesPerConvo]',
-    `Fill the targeted address with the specified number of conversation invites.
-    
-    numInvites * numMessagesPerConvo should be < 499 to avoid rate limiting`,
-    {
-      address: { type: 'string' },
-      numInvites: { type: 'number' },
-      numMessagesPerConvo: { type: 'number', default: 0 },
-    },
-    async (argv: any) => {
-      const { env, address, numInvites, numMessagesPerConvo } = argv
-      for (let i = 0; i < numInvites; i++) {
-        const client = await Client.create(randomWallet(), { env })
-        const convo = await client.conversations.newConversation(address, {
-          conversationId: `xmtp.org/test/${i}`,
-          metadata: {},
-        })
-        for (let j = 0; j < numMessagesPerConvo; j++) {
-          await convo.send(`gm ${j}`)
-        }
-      }
-    }
-  )
   // all options can be passed in as env vars prefixed with XMTP_
   .env('XMTP')
   // log the network environment used
