@@ -87,7 +87,7 @@ yargs(hideBin(process.argv))
     'fill-conversation-list [address] [numInvites] [numMessagesPerConvo]',
     `Fill the targeted address with the specified number of conversation invites.
     
-    numInvites * numMessagesPerConvo should be < 499 to avoid rate limiting`,
+    (numInvites * 3) + (numInvites * numMessagesPerConvo) should be < 1000 to avoid rate limiting`,
     {
       address: { type: 'string' },
       numInvites: { type: 'number' },
@@ -96,6 +96,10 @@ yargs(hideBin(process.argv))
     async (argv) => {
       await fillConversationList(argv)
     }
+  )
+  .example(
+    '$0 -- fill-conversation-list xmtp.eth 10 1',
+    'Start 10 conversations with xmtp.eth and send one message per conversation'
   )
   .option('env', {
     alias: 'e',
