@@ -8,14 +8,16 @@ export default async function fillInvites(argv: any) {
     `Sending ${numInvites} invites to ${address} and sending ${numMessagesPerConvo} messages per invite`
   )
 
-  for (let i = 0; i < numInvites; i++) {
-    const client = await Client.create(randomWallet(), { env })
-    const convo = await client.conversations.newConversation(address, {
-      conversationId: `xmtp.org/test/${i}`,
-      metadata: {},
+  await Promise.all(
+    Array.from({ length: numInvites }, async (_, i) => {
+      const client = await Client.create(randomWallet(), { env })
+      const convo = await client.conversations.newConversation(address, {
+        conversationId: `xmtp.org/test/${i}`,
+        metadata: {},
+      })
+      for (let j = 0; j < numMessagesPerConvo; j++) {
+        await convo.send(`gm ${j}`)
+      }
     })
-    for (let j = 0; j < numMessagesPerConvo; j++) {
-      await convo.send(`gm ${j}`)
-    }
-  }
+  )
 }
