@@ -6,6 +6,7 @@ import {
   saveRandomWallet,
   resolveAddress,
   WALLET_FILE_LOCATION,
+  randomWallet,
 } from "./utils";
 import intros from "./intros";
 import contacts from "./contacts";
