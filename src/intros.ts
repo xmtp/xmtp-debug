@@ -22,12 +22,10 @@ export default async function intros(argv: {
 }) {
   const { client, cmd, address, long } = argv
   let currentContact = await client.getUserContact(address)
-  console.log('Got current contact')
   if (!currentContact) {
     throw new Error('No contact for address ${address}')
   }
   if (currentContact instanceof SignedPublicKeyBundle) {
-    console.log('Is signed')
     currentContact = currentContact.toLegacyBundle()
   }
   const intros = await client.listEnvelopes(
