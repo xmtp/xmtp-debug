@@ -1,7 +1,10 @@
 // @ts-ignore
 import { SealedInvitation } from '@xmtp/xmtp-js/dist/cjs/src/Invitation'
-// @ts-ignore
-import { buildUserInviteTopic, nsToDate } from '@xmtp/xmtp-js'
+import {
+  buildUserInviteTopic,
+  nsToDate,
+  // @ts-ignore
+} from '@xmtp/xmtp-js/dist/cjs/src/utils'
 import { toListOptions, truncateEthAddress } from './utils'
 
 export default async function invites(argv: any) {
