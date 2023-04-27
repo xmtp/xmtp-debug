@@ -42,6 +42,9 @@ export default async function contacts(argv: any) {
     case 'check':
       await check(contacts)
       break
+    case 'dump':
+      await dump(contacts)
+      break
     default:
       console.log(`invalid command ${cmd}`)
   }
@@ -85,6 +88,12 @@ async function check(contacts: Contact[]) {
   console.log(
     `Number of contacts: ${numContacts}. Mismatched: ${numMismatched}`
   )
+}
+
+async function dump(contacts: Contact[]) {
+  for (const contact of contacts) {
+    console.dir(contact, {depth: 4})
+  }
 }
 
 function equal(a: Contact, b: Contact): boolean {
