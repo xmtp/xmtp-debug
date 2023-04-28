@@ -25,6 +25,8 @@ export function verifyIdentityKeyV1(keybundle: PublicKeyBundle) {
     errors.push('idkey_missing')
     return errors
   } else {
+    // Direct quote from BIP-137 (Just quoted for their description of a known key format)
+    // The older uncompressed keys are 65 bytes, consisting of constant prefix (0x04), followed by two 256-bit integers called x and y (2 * 32 bytes).
     if (identityKey.secp256k1Uncompressed) {
       const idkey = identityKey.secp256k1Uncompressed.bytes
       if (idkey.length !== 65) {
@@ -53,6 +55,9 @@ export function verifyIdentityKeySignatureV1(
     return errors
   }
   const idkeySig = identityKey.signature.ecdsaCompact.bytes
+  // Signatures in proto form are (r, s) where r and s are 32 bytes each
+  // The v can be appended to form a 65 byte signature, but in our case we
+  // carry the recovery id separately
   if (idkeySig.length !== 64) {
     errors.push('idkey_sig_bad_len_' + idkeySig.length)
     return errors
