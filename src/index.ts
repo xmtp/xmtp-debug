@@ -62,7 +62,11 @@ yargs(hideBin(process.argv))
     'contacts [cmd] [address]',
     'list/check published contacts for the address',
     {
-      cmd: { type: 'string', choices: ['check', 'list', 'dump'], default: 'list' },
+      cmd: {
+        type: 'string',
+        choices: ['check', 'list', 'dump', 'verify'],
+        default: 'list',
+      },
       address: { type: 'string' },
     },
     async (argv: any) => {

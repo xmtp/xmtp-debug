@@ -12,6 +12,11 @@ import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions } from './utils'
 const { b64Decode } = fetcher
+import {
+  verifyIdentityKeyV1,
+  verifyIdentityKeySignatureV1,
+  verifyPreKeyV1,
+} from './verify_utils'
 
 type Contact = {
   timestamp: Date
@@ -44,6 +49,9 @@ export default async function contacts(argv: any) {
       break
     case 'dump':
       await dump(contacts)
+      break
+    case 'verify':
+      await verify(address, contacts)
       break
     default:
       console.log(`invalid command ${cmd}`)
@@ -92,8 +100,54 @@ async function check(contacts: Contact[]) {
 
 async function dump(contacts: Contact[]) {
   for (const contact of contacts) {
-    console.dir(contact, {depth: 4})
+    console.dir(contact, { depth: 4 })
   }
+}
+
+/**
+ * Checks several invariants of each contact bundle:
+ * - If v1:
+ *   - Identity key is a valid secp256k1 uncompressed public key
+ *   - Pre key is a valid secp256k1 uncompressed public key
+ *   - IdentityKey is a PublicKey with a signature, the signature has .ecdsaCompact
+ *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the correct address
+ *   - PreKey is a PublicKey with a signature, the signature has .ecdsaCompact
+ *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the identity key
+ * - If v2: (TODO)
+ * @param contacts
+ */
+async function verify(address: string, contacts: Contact[]) {
+  // Rows is a list of [date, type, identityKey, preKey, concatenated invariant checks]
+  let rows = []
+  for (const { timestamp, contact } of contacts) {
+    // V1 - check codes are:
+    // - idkey_bad - identity key is not valid secp256k1 uncompressed
+    // - prekey_bad - pre key is not valid secp256k1 uncompressed
+    // - idkey_sig_missing - identity key is not a PublicKey with a signature
+    // - idkey_wrong_sig_type - identity key signature has walletEcdsaCompact instead of ecdsaCompact
+    // - prekey_sig_missing - pre key is not a PublicKey with a signature
+    // - prekey_wrong_sig_type - pre key signature has walletEcdsaCompact instead of ecdsaCompact
+    // - idkey_sig_bad - identity key signature is not a valid secp256k1 signature (recovers to wrong address)
+    // - prekey_sig_bad - pre key signature is not a valid secp256k1 signature (not signed by this idkey)
+    let errors = []
+    if (contact instanceof PublicKeyBundle) {
+      const { identityKey, preKey } = contact
+      let idKeyErrors = verifyIdentityKeyV1(contact)
+      errors.push(...idKeyErrors)
+      let idkeySigErrors = verifyIdentityKeySignatureV1(contact)
+      errors.push(...idkeySigErrors)
+      let preKeyErrors = verifyPreKeyV1(contact)
+      errors.push(...preKeyErrors)
+
+      let joinedErrors = errors.join(',')
+      rows.push({
+        date: timestamp,
+        type: contact instanceof PublicKeyBundle ? 'v1' : 'v2',
+        errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
+      })
+    }
+  }
+  console.table(rows)
 }
 
 function equal(a: Contact, b: Contact): boolean {
