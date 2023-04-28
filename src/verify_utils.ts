@@ -30,7 +30,7 @@ export function verifyIdentityKeyV1(keybundle: PublicKeyBundle) {
     if (identityKey.secp256k1Uncompressed) {
       const idkey = identityKey.secp256k1Uncompressed.bytes
       if (idkey.length !== 65) {
-        errors.push('idkey_bad')
+        errors.push('idkey_bad_len_' + idkey.length)
       }
     }
   }
@@ -83,7 +83,7 @@ export async function verifyPreKeyV1(keybundle: PublicKeyBundle) {
     if (preKey.secp256k1Uncompressed) {
       const prekey = preKey.secp256k1Uncompressed.bytes
       if (prekey.length !== 65) {
-        errors.push('prekey_bad')
+        errors.push('prekey_bad_len_' + prekey.length)
       }
     }
   }
