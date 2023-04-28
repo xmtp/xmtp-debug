@@ -13,6 +13,7 @@ import { fetcher } from '@xmtp/proto'
 import { toListOptions } from './utils'
 const { b64Decode } = fetcher
 import {
+  truncateHex,
   verifyIdentityKeyV1,
   verifyIdentityKeySignatureV1,
   verifyPreKeyV1,
@@ -120,23 +121,15 @@ async function verify(address: string, contacts: Contact[]) {
   // Rows is a list of [date, type, identityKey, preKey, concatenated invariant checks]
   let rows = []
   for (const { timestamp, contact } of contacts) {
-    // V1 - check codes are:
-    // - idkey_bad - identity key is not valid secp256k1 uncompressed
-    // - prekey_bad - pre key is not valid secp256k1 uncompressed
-    // - idkey_sig_missing - identity key is not a PublicKey with a signature
-    // - idkey_wrong_sig_type - identity key signature has walletEcdsaCompact instead of ecdsaCompact
-    // - prekey_sig_missing - pre key is not a PublicKey with a signature
-    // - prekey_wrong_sig_type - pre key signature has walletEcdsaCompact instead of ecdsaCompact
-    // - idkey_sig_bad - identity key signature is not a valid secp256k1 signature (recovers to wrong address)
-    // - prekey_sig_bad - pre key signature is not a valid secp256k1 signature (not signed by this idkey)
     let errors = []
+    // TODO: verify v2
     if (contact instanceof PublicKeyBundle) {
       const { identityKey, preKey } = contact
       let idKeyErrors = verifyIdentityKeyV1(contact)
       errors.push(...idKeyErrors)
-      let idkeySigErrors = verifyIdentityKeySignatureV1(contact)
+      let idkeySigErrors = verifyIdentityKeySignatureV1(address, contact)
       errors.push(...idkeySigErrors)
-      let preKeyErrors = verifyPreKeyV1(contact)
+      let preKeyErrors = await verifyPreKeyV1(contact)
       errors.push(...preKeyErrors)
 
       let joinedErrors = errors.join(',')
@@ -158,14 +151,4 @@ function equal(a: Contact, b: Contact): boolean {
     : b.contact instanceof SignedPublicKeyBundle
     ? a.contact.equals(b.contact)
     : false
-}
-
-function truncateHex(hex: string, shouldTruncate = true): string {
-  if (!shouldTruncate) {
-    return hex
-  }
-  if (hex.length < 8) {
-    return hex
-  }
-  return `${hex.slice(0, 4)}…${hex.slice(-4)}`
 }
