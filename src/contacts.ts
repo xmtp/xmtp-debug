@@ -131,7 +131,7 @@ async function verify(address: string, contacts: Contact[]) {
   let rows = []
   for (const { timestamp, contact } of contacts) {
     let errors = []
-    // TODO: verify v2
+    // Verify v1
     if (contact instanceof PublicKeyBundle) {
       const { identityKey, preKey } = contact
       let idKeyErrors = verifyIdentityKeyV1(contact)
@@ -148,12 +148,14 @@ async function verify(address: string, contacts: Contact[]) {
         errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
       })
     } else if (contact instanceof SignedPublicKeyBundle) {
+      // Verify v2
       let idKeyErrors = verifyIdentityKeyV2(contact)
       errors.push(...idKeyErrors)
       let idkeySigErrors = await verifyIdentityKeySignatureV2(address, contact)
       errors.push(...idkeySigErrors)
       let preKeyErrors = await verifyPreKeyV2(contact)
       errors.push(...preKeyErrors)
+
       let joinedErrors = errors.join(',')
       rows.push({
         date: timestamp,
