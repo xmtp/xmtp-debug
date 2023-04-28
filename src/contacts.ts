@@ -17,6 +17,9 @@ import {
   verifyIdentityKeyV1,
   verifyIdentityKeySignatureV1,
   verifyPreKeyV1,
+  verifyIdentityKeyV2,
+  verifyIdentityKeySignatureV2,
+  verifyPreKeyV2,
 } from './verify_utils'
 
 type Contact = {
@@ -114,7 +117,13 @@ async function dump(contacts: Contact[]) {
  *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the correct address
  *   - PreKey is a PublicKey with a signature, the signature has .ecdsaCompact
  *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the identity key
- * - If v2: (TODO)
+ * - If v2:
+ *   - Identity key is a SignedPublicKey, embedding a serialized UnsignedPublicKey which satisfies the above
+ *   - Ditto for prekey
+ *   - Expect a .walletEcdsaCompact signature on the identity key (type SignedPublicKey)
+ *   - The .walletEcdsaCompact is a valid secp256k1 signature that recovers to the correct address
+ *   - Expect a .ecdsaCompact signature on the prekey (type SignedPublicKey)
+ *   - The .ecdsaCompact is a valid secp256k1 signature that recovers to the identity key
  * @param contacts
  */
 async function verify(address: string, contacts: Contact[]) {
@@ -139,10 +148,17 @@ async function verify(address: string, contacts: Contact[]) {
         errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
       })
     } else if (contact instanceof SignedPublicKeyBundle) {
+      let idKeyErrors = verifyIdentityKeyV2(contact)
+      errors.push(...idKeyErrors)
+      let idkeySigErrors = await verifyIdentityKeySignatureV2(address, contact)
+      errors.push(...idkeySigErrors)
+      let preKeyErrors = await verifyPreKeyV2(contact)
+      errors.push(...preKeyErrors)
+      let joinedErrors = errors.join(',')
       rows.push({
         date: timestamp,
         type: 'v2',
-        errors: 'v2 checking not implemented',
+        errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
       })
     }
   }
