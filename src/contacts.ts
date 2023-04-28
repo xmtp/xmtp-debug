@@ -12,6 +12,12 @@ import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions } from './utils'
 const { b64Decode } = fetcher
+import {
+  truncateHex,
+  verifyIdentityKeyV1,
+  verifyIdentityKeySignatureV1,
+  verifyPreKeyV1,
+} from './verify_utils'
 
 type Contact = {
   timestamp: Date
@@ -44,6 +50,9 @@ export default async function contacts(argv: any) {
       break
     case 'dump':
       await dump(contacts)
+      break
+    case 'verify':
+      await verify(address, contacts)
       break
     default:
       console.log(`invalid command ${cmd}`)
@@ -92,8 +101,52 @@ async function check(contacts: Contact[]) {
 
 async function dump(contacts: Contact[]) {
   for (const contact of contacts) {
-    console.dir(contact, {depth: 4})
+    console.dir(contact, { depth: 4 })
   }
+}
+
+/**
+ * Checks several invariants of each contact bundle:
+ * - If v1:
+ *   - Identity key is a valid secp256k1 uncompressed public key
+ *   - Pre key is a valid secp256k1 uncompressed public key
+ *   - IdentityKey is a PublicKey with a signature, the signature has .ecdsaCompact
+ *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the correct address
+ *   - PreKey is a PublicKey with a signature, the signature has .ecdsaCompact
+ *     - The .ecdsaCompact is a valid secp256k1 signature that recovers to the identity key
+ * - If v2: (TODO)
+ * @param contacts
+ */
+async function verify(address: string, contacts: Contact[]) {
+  // Rows is a list of [date, type, identityKey, preKey, concatenated invariant checks]
+  let rows = []
+  for (const { timestamp, contact } of contacts) {
+    let errors = []
+    // TODO: verify v2
+    if (contact instanceof PublicKeyBundle) {
+      const { identityKey, preKey } = contact
+      let idKeyErrors = verifyIdentityKeyV1(contact)
+      errors.push(...idKeyErrors)
+      let idkeySigErrors = verifyIdentityKeySignatureV1(address, contact)
+      errors.push(...idkeySigErrors)
+      let preKeyErrors = await verifyPreKeyV1(contact)
+      errors.push(...preKeyErrors)
+
+      let joinedErrors = errors.join(',')
+      rows.push({
+        date: timestamp,
+        type: 'v1',
+        errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
+      })
+    } else if (contact instanceof SignedPublicKeyBundle) {
+      rows.push({
+        date: timestamp,
+        type: 'v2',
+        errors: 'v2 checking not implemented',
+      })
+    }
+  }
+  console.table(rows)
 }
 
 function equal(a: Contact, b: Contact): boolean {
@@ -104,14 +157,4 @@ function equal(a: Contact, b: Contact): boolean {
     : b.contact instanceof SignedPublicKeyBundle
     ? a.contact.equals(b.contact)
     : false
-}
-
-function truncateHex(hex: string, shouldTruncate = true): string {
-  if (!shouldTruncate) {
-    return hex
-  }
-  if (hex.length < 8) {
-    return hex
-  }
-  return `${hex.slice(0, 4)}…${hex.slice(-4)}`
 }
