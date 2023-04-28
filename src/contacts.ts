@@ -135,8 +135,14 @@ async function verify(address: string, contacts: Contact[]) {
       let joinedErrors = errors.join(',')
       rows.push({
         date: timestamp,
-        type: contact instanceof PublicKeyBundle ? 'v1' : 'v2',
+        type: 'v1',
         errors: joinedErrors.length > 0 ? joinedErrors : 'ok',
+      })
+    } else if (contact instanceof SignedPublicKeyBundle) {
+      rows.push({
+        date: timestamp,
+        type: 'v2',
+        errors: 'v2 checking not implemented',
       })
     }
   }
