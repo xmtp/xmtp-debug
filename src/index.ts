@@ -13,6 +13,7 @@ import contacts from './contacts'
 import privateKeys from './privateKeys'
 import invites from './invites'
 import fillConversationList from './fillConversationList'
+import crosscheck from './crosscheck'
 
 yargs(hideBin(process.argv))
   .scriptName(`npm start`)
@@ -105,6 +106,20 @@ yargs(hideBin(process.argv))
     '$0 -- fill-conversation-list xmtp.eth 10 1',
     'Start 10 conversations with xmtp.eth and send one message per conversation'
   )
+  .command(
+    'crosscheck [address]',
+    `A metacommand to check a given address for common issues like dev/prod confusion (i.e. dev contact bundle on prod)`,
+    {
+      address: { type: 'string' },
+    },
+    async (argv) => {
+      await crosscheck(await resolveEnvAgnostic(argv))
+    }
+  )
+  .example(
+    '$0 -- crosscheck xmtp.eth',
+    'Run a variety of checks on xmtp.eth to ensure it is not misconfigured'
+  )
   .option('env', {
     alias: 'e',
     type: 'string',
@@ -153,6 +168,14 @@ yargs(hideBin(process.argv))
 async function resolve(argv: any) {
   const { env, address } = argv
   argv.client = await Client.create(loadWallet(), { env })
+  argv.address = await resolveAddress(address)
+  return argv
+}
+
+async function resolveEnvAgnostic(argv: any) {
+  const { address } = argv
+  argv.prodClient = await Client.create(loadWallet(), { env: 'production' })
+  argv.devClient = await Client.create(loadWallet(), { env: 'dev' })
   argv.address = await resolveAddress(address)
   return argv
 }
