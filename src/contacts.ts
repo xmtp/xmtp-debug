@@ -127,13 +127,12 @@ async function check(contacts: Contact[]) {
 
 // Check for dev/prod confusion i.e. where a client mistakenly uploads
 // prod contacts to dev or vice versa
-// NOTE: this requires ignoring the environment flag and checking against both environments
 export function crosscheckContacts(
   devContacts: Contact[],
   prodContacts: Contact[]
 ) {
-  // Look for any identity keys that are the same in both environments. The identity key
-  // and an prekeys should be unique per environment.
+  // Look for any identity keys that are the same in both environments. The identity key should
+  // be unique per environment (generated randomly and independently)
   const devIdentityKeys = new Set<string>()
   const prodIdentityKeys = new Set<string>()
   for (const contact of devContacts) {
@@ -151,7 +150,7 @@ export function crosscheckContacts(
   )
   if (intersection.size > 0) {
     // Return an error message
-    return `Found ${intersection.size} identity keys that are the same in both environments. The identity key and prekeys should be unique per environment.`
+    return `Found ${intersection.size} identity keys that are the same in both environments. The identity key should be unique per environment.`
   }
   return null
 }
