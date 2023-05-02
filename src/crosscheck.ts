@@ -11,25 +11,39 @@ export default async function crosscheck(argv: any) {
   // Use contacts.crosscheckContacts to check for dev/prod confusion
   let devProdConfusionError = crosscheckContacts(devContacts, prodContacts)
   if (devProdConfusionError) {
-    rows.push(['dev/prod confusion', 'FAIL', devProdConfusionError])
+    rows.push({
+      check: 'dev/prod confusion',
+      status: 'FAIL',
+      error: devProdConfusionError,
+    })
   } else {
-    rows.push([
-      'dev/prod confusion',
-      'PASS',
-      `No intermixed contacts. Found ${devContacts.length} dev contacts and ${prodContacts.length} prod contacts`,
-    ])
+    rows.push({
+      check: 'dev/prod confusion',
+      status: 'PASS',
+      error: `No intermixed contacts. Found ${devContacts.length} dev contacts and ${prodContacts.length} prod contacts`,
+    })
   }
   console.table(rows)
   // Create artificial commands for contacts.verify on both dev and prod
   // Use contacts.verify to check for malformed contacts, this function prints its own output
   if (devContacts.length === 0) {
-    console.table(['dev contacts', 'SKIP', 'No contacts to verify'])
+    console.table([
+      { check: 'dev contacts', status: 'SKIP - No contacts to verify' },
+    ])
   } else {
+    console.table([
+      { check: 'Checking dev contact bundle integrity', status: 'RUN' },
+    ])
     await verify(address, devContacts)
   }
   if (prodContacts.length === 0) {
-    console.table(['prod contacts', 'SKIP', 'No contacts to verify'])
+    console.table([
+      { check: 'prod contacts', status: 'SKIP - No contacts to verify' },
+    ])
   } else {
+    console.table([
+      { check: 'Checking prod contact bundle integrity', status: 'RUN' },
+    ])
     await verify(address, prodContacts)
   }
 }
