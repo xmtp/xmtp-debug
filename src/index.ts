@@ -108,7 +108,7 @@ yargs(hideBin(process.argv))
   )
   .command(
     'crosscheck [address]',
-    `A metacommand to check a given address for common issues like dev/prod confusion (i.e. dev contact bundle on prod)`,
+    `Run a given address through a suite of checks for  known issues like dev/prod confusion (i.e. dev contact bundle on prod)`,
     {
       address: { type: 'string' },
     },
