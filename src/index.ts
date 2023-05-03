@@ -14,6 +14,7 @@ import privateKeys from './privateKeys'
 import invites from './invites'
 import fillConversationList from './fillConversationList'
 import crosscheck from './crosscheck'
+import { generate } from './test_generator_v2'
 
 yargs(hideBin(process.argv))
   .scriptName(`npm start`)
@@ -119,6 +120,20 @@ yargs(hideBin(process.argv))
   .example(
     '$0 -- crosscheck xmtp.eth',
     'Run a variety of checks on xmtp.eth to ensure it is not misconfigured'
+  )
+  .command(
+    'gen_v2_tests',
+    `Generate a set of protocol-verifying test cases for a given language [typescript|rust|swift|kotlin|go]`,
+    {
+      language: { type: 'string' },
+    },
+    async (argv) => {
+      await generate(argv.language ?? 'typescript')
+    }
+  )
+  .example(
+    '$0 -- gen_v2_tests typescript',
+    'Generate a set of example test cases for typescript'
   )
   .option('env', {
     alias: 'e',

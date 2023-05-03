@@ -6,13 +6,13 @@
 
 import { TypeScriptGenerator } from './test_generators/typescript_generator'
 
-type TestCase = {
+export type TestCase = {
   preconditions?: any
   input: any
   outputConditions: any
 }
 
-const MESSAGE_TEST_CASES = {
+const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
   // Identity tests - upon new identity creation what are we expecting?
   identityCreation: {
     // Wallet private key in hex
@@ -47,6 +47,21 @@ const MESSAGE_TEST_CASES = {
 // - Generate a section for expected outputs
 //   - This means for each output object, generate a section for it
 //   - Either generate a failing assert or a comment for each key/value pair
-export const GENERATORS = {
+type Generator = {
+  generate: () => string
+}
+
+export const GENERATORS: { [key: string]: Generator } = {
   typescript: new TypeScriptGenerator(MESSAGE_TEST_CASES),
+}
+
+export function generate(language: string) {
+  if (!GENERATORS[language]) {
+    throw new Error(`Unsupported language: ${language}`)
+  }
+  const sourceString = GENERATORS[language].generate()
+  // Print it out nicely
+  console.log('== Generated for language: ' + language + ' ==')
+  console.log(sourceString)
+  console.log('== End generated for language: ' + language + ' ==')
 }

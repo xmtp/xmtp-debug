@@ -1,3 +1,5 @@
+import { TestCase } from '../test_generator_v2'
+
 export class TypeScriptGenerator {
   testCases: any
 
