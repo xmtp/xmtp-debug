@@ -1,6 +1,7 @@
 import { TestCase } from '../test_generator_v2'
 
-export class TypeScriptGenerator {
+// Generate a rust version of the above TypescriptGenerator
+export class RustGenerator {
   testCases: any
 
   constructor(testCases: any) {
@@ -20,8 +21,9 @@ export class TypeScriptGenerator {
     const outputConditions = testCase.outputConditions
 
     let code = ''
-    code += `test['${testName}'] = async function() {\n`
-    // Add comment with description, automatically wrap the description at 80 characters
+    code += `#[test]\n`
+    code += `fn ${testName}() {\n`
+    // Create a comment with the description, wrapping at 80 characters
     let wrappedDescription = ''
     let description = testCase.description
     while (description.length > 80) {
@@ -43,7 +45,7 @@ export class TypeScriptGenerator {
     if (input) {
       code += `  // Inputs:\n`
       for (let [key, value] of Object.entries(input)) {
-        code += `  const ${key} = ${value}\n`
+        code += `  let ${key} = ${value};\n`
       }
     } else {
       code += `  // No input\n`
@@ -59,10 +61,11 @@ export class TypeScriptGenerator {
       for (let [key, value] of Object.entries(expectedOutputFields as any)) {
         if (key.startsWith('throwComment_')) {
           code += `  // ${value}\n`
+          // Add a failing assert with a comment above it "replace with your own implementation"
           code += `  // - implement and replace:\n`
-          code += `  assert.fail()\n`
+          code += `  assert!(false);\n`
         } else {
-          code += `  assert.equal(${key}, ${value})\n`
+          code += `  assert_eq!(${key}, ${value});\n`
         }
       }
     }
