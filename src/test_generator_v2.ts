@@ -10,23 +10,24 @@ type TestCase = {
   outputConditions: any
 }
 
-
 const MESSAGE_TEST_CASES = {
   // Identity tests - upon new identity creation what are we expecting?
-  "identityCreation":{
+  identityCreation: {
     // Wallet private key in hex
     preconditions: {
-      'walletPrivateKey': '"0x00"'
+      walletPrivateKey: '"0x00"',
     },
     input: {},
     outputConditions: {
-      'privateKeyBundleV1': {
-        'address': '"0x0000"',
-        'throwComment_identityKeyIsValidSecp256k1': 'Check that the identity key is a valid secp256k1 private key',
-        'throwComment_checkIdentityKeySignedByWallet': 'Check that the identity key is signed by the wallet private key',
-      }
-    }
-  }
+      privateKeyBundleV1: {
+        address: '"0x0000"',
+        throwComment_identityKeyIsValidSecp256k1:
+          'Check that the identity key is a valid secp256k1 private key',
+        throwComment_checkIdentityKeySignedByWallet:
+          'Check that the identity key is signed by the wallet private key',
+      },
+    },
+  },
 }
 
 // Language generators
@@ -76,7 +77,9 @@ class TypeScriptGenerator {
     }
     code += '\n\n'
     code += `  // Expected outputs:\n`
-    for (let [outputKey, expectedOutputFields] of Object.entries(outputConditions)) {
+    for (let [outputKey, expectedOutputFields] of Object.entries(
+      outputConditions
+    )) {
       // Add section comment like "// Testing output: outputKey"
       code += `  // Testing output object: ${outputKey}\n`
       // Add a failing assert or comment for each key/value pair
@@ -109,4 +112,3 @@ export function main() {
 }
 
 main()
-
