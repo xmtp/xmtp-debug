@@ -5,6 +5,7 @@
 // - expected behavior (various forms, either hardcoded vectors or a placeholder "throw" with a comment)
 
 import { TypeScriptGenerator } from './test_generators/typescript_generator'
+import { RustGenerator } from './test_generators/rust_generator'
 
 export type TestCase = {
   preconditions?: any
@@ -53,6 +54,7 @@ type Generator = {
 
 export const GENERATORS: { [key: string]: Generator } = {
   typescript: new TypeScriptGenerator(MESSAGE_TEST_CASES),
+  rust: new RustGenerator(MESSAGE_TEST_CASES),
 }
 
 export function generate(language: string) {

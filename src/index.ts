@@ -122,10 +122,13 @@ yargs(hideBin(process.argv))
     'Run a variety of checks on xmtp.eth to ensure it is not misconfigured'
   )
   .command(
-    'gen_v2_tests',
+    'gen_v2_tests [language]',
     `Generate a set of protocol-verifying test cases for a given language [typescript|rust|swift|kotlin|go]`,
     {
-      language: { type: 'string' },
+      language: {
+        type: 'string',
+        choices: ['typescript', 'rust', 'swift', 'kotlin', 'go'],
+      },
     },
     async (argv) => {
       await generate(argv.language ?? 'typescript')
