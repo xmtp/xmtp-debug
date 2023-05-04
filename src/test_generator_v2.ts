@@ -15,6 +15,116 @@ export type TestCase = {
 }
 
 const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
+  // Basic cryptographic foundation tests
+  // - Can perform sha256 digest
+  sha256Digest: {
+    preconditions: {},
+    description: 'Verify that a sha256 digest of a string is correct.',
+    input: {
+      messageHex: '"616263"', // abc as hex
+    },
+    outputConditions: {
+      digest: {
+        outputHex:
+          '"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"',
+      },
+    },
+  },
+  // - Can perform keccak256 digest
+  keccak256Digest: {
+    preconditions: {},
+    description: 'Verify that a keccak256 digest of a string is correct.',
+    input: {
+      messageHex: '"616263"', // abc as hex
+    },
+    outputConditions: {
+      digest: {
+        outputHex:
+          '"4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45"',
+      },
+    },
+  },
+  // - Can generate secp256k1 public key from private key
+  secp256k1PublicKeyFromPrivateKey: {
+    preconditions: {},
+    description:
+      'Verify that a secp256k1 public key can be generated from a private key.',
+    input: {
+      privateKeyHex:
+        '"8462d54e1887d1b8fe7567d06c5460c01c42ca2b973a3b93d4b047c8defd4fda"',
+    },
+    outputConditions: {
+      publicKey: {
+        outputHex:
+          '04d935d2cd9d0f8d0168de0297fef5060b102b4223c78abc6f14bcb1941f05ae08a9ad1bfc1c072ed71689f05ddd994be5ff41c1897a1ac9718115e94a468ab7dc',
+      },
+    },
+  },
+  // - Can verify a secp256k1 ECDSA signature with keccak256 as digest mechanism
+  secp256k1VerifySignatureKeccak256: {
+    preconditions: {},
+    description:
+      'Verify that a secp256k1 ECDSA signature can be verified with keccak256 as the digest mechanism.',
+    input: {
+      publicKeyHex: '"...."',
+      messageHex: '"...."',
+      signatureHex: '"...."',
+    },
+    outputConditions: {
+      result: {
+        isValid: 'true',
+      },
+    },
+  },
+  // - Can catch a forged secp256k1 ECDSA signature with keccak256 as digest mechanism
+  secp256k1CatchForgedSignatureKeccak256: {
+    preconditions: {},
+    description:
+      'Verify that a forged secp256k1 ECDSA signature can be caught with keccak256 as the digest mechanism.',
+    input: {
+      publicKeyHex: '"...."',
+      messageHex: '"...."',
+      signatureHex: '"...."',
+    },
+    outputConditions: {
+      result: {
+        isValid: 'false',
+      },
+    },
+  },
+  // - Can verify a secp256k1 ECDSA signature with sha256 as digest mechanism
+  secp256k1VerifySignatureSha256: {
+    preconditions: {},
+    description:
+      'Verify that a secp256k1 ECDSA signature can be verified with sha256 as the digest mechanism.',
+    input: {
+      publicKeyHex: '"...."',
+      messageHex: '"...."',
+      signatureHex: '"...."',
+    },
+    outputConditions: {
+      result: {
+        isValid: 'true',
+      },
+    },
+  },
+  // - Can catch an invalid secp256k1 ECDSA signature with sha256 as digest mechanism
+  secp256k1CatchInvalidSignatureSha256: {
+    preconditions: {},
+    description:
+      'Verify that an invalid secp256k1 ECDSA signature can be caught with sha256 as the digest mechanism.',
+    input: {
+      publicKeyHex: '"...."',
+      messageHex: '"...."',
+      signatureHex: '"...."',
+    },
+    outputConditions: {
+      result: {
+        isValid: 'false',
+      },
+    },
+  },
+  // - Has ability to form EIP191 ethereum message hash
   // Identity tests - upon new identity creation what are we expecting?
   identityCreation: {
     // Wallet private key in hex
