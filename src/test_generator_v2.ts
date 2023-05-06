@@ -132,11 +132,11 @@ const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
     description:
       'Verify that a newly created XMTP identity as a PrivateKeyBundleV1 object is valid. This means that the identity key is signed by the wallet private key, and the prekey is signed by the identity key. All keys are on the curve secp256k1. Private keys are 32 bytes, public keys are 64 bytes, and signatures are 64 bytes, with an integer recoveryId.',
     input: {
-      walletPrivateKey: '"0x00"',
+      walletPrivateKeyHex: '"977533310754dff7a630bc2ccf283317791d2d30cb030fb6cf6864beba749337"',
     },
     outputConditions: {
       privateKeyBundleV1: {
-        address: '"0x0000"',
+        address: '"0x83150c471F3c8215e1c372a2378D9Ffa95485AF5"',
         throwComment_identityKeyIsValidSecp256k1:
           'Check that the identity key is a valid secp256k1 private key',
         throwComment_checkIdentityKeySignedByWallet:
@@ -172,11 +172,11 @@ const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
     description:
       'Verify that a newly created XMTP contact bundle as a ContactBundleV1 object is valid. This means that the contact key is signed by the identity key, and the prekey is signed by the contact key. All keys are on the curve secp256k1. Private keys are 32 bytes, public keys are 64 bytes, and signatures are 64 bytes, with an integer recoveryId.',
     input: {
-      walletPrivateKey: '"0x00"',
+      walletPrivateKeyHex: '"977533310754dff7a630bc2ccf283317791d2d30cb030fb6cf6864beba749337"',
     },
     outputConditions: {
       contactBundleV1: {
-        address: '"0x0000"',
+        address: '"0x83150c471F3c8215e1c372a2378D9Ffa95485AF5"',
         throwComment_identityKeyIsValidSecp256k1:
           'Check that the identity key is a valid secp256k1 private key',
         throwComment_checkIdentityKeySignedByWallet:
@@ -190,17 +190,17 @@ const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
       },
     },
   },
-  contactBundleConsumptionValid: {
+  contactBundleUsageValidation: {
     preconditions: {},
     description:
       'Similar to checks for verifying a newly created ContactBundle, but on the accepting or receiving side. Utilizes two hardcoded serialized ContactBundles protobufs, one with .v1 and one with .v2',
     input: {
-      validVersionedContactBundleV1: '"0x00"',
-      validVersionedContactBundleV2: '"0x00"',
+      validVersionedContactBundleV1Hex: '"0aad020aaa020a920108fc828fa2fe3012440a420a407f90cbb57354a1a32885e2829c77b4be806c67158baa5f975492cd65aac8c0197d7137bb65a6ee6aa3a2bc789f39905cc54ebb7fdd7aaba4a355fb6ff52c15d31a430a4104c042179e99c799cf398f20d3f896d24a9a60485a5e988d169f2284a03455c438d66a8ac65f452262a7f346dfe2c8fc6c608c62011ed02cefe2d257a374562d5912920108a1838fa2fe3012440a420a401f62a07c9ee90aae68d6f9746b422cd671a76f2dc2c12b882b8c4ee4c0eb9e3a1e6838b184b43fdbe1530de044f6728fa2bbc696e1be730f292648c186e843f61a430a410455765be2fe7c12913e4a04dfe27c73da0746896ffb4fecf25869420cda976fe936b7223685ffc8ed0abed4cd1de003c6cc30734a5276a7568aae5c5e417df055"',
+      validVersionedContactBundleV2Hex: '"12bb020ab8020a99010a4f08c08accdd8aa7f2ad171a430a410433fca669cf6ab40c52216fd9da110536c66f734b653510351a0e8089d4d6a01d8523a0da1961058f1f7b0040dddf6872ed12f242ff7f372f8d2fbbe0de1e9c83124612440a40c3b2d9130625445d154a7e7f97c6fe177865ea57ca0ecd18fad8dc3c8cf16d5638b46d22a68afbd73c7187a5703dca2d6e37a3d482ce1d16c6abece28c243ba310011299010a4f08c0ace1ee8aa7f2ad171a430a41044747cd15e070a2a737957e67c5bf618cdccaadc509829b21097d7b2129fdf1c84324ea54157929d683c4bf77d117d5600ad0d736c42858bfa7ee7667c9bc719a12460a440a407cdfde991712d85f134b368b5e9ef9a70edc30c843f40202160879a6198cabf1563b96166e47dbd2c79d10aa1b646b402f5c73251b92c218fcc8533124f256fb1001"',
     },
     outputConditions: {
       contactBundleV1: {
-        address: '"0x0000"',
+        address: '"0xb93E78f23E34184437bB1f82564b716294a939b0"',
         throwComment_identityKeyExistsAndIsSignedByWallet:
           'Check that the identity key exists and is signed by the wallet private key',
         throwComment_ecdsaCompactSignatureIsValid:
@@ -209,7 +209,7 @@ const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
           'Check that the prekey exists and is signed by the identity key, after sha256()',
       },
       contactBundleV2: {
-        address: '"0x0000"',
+        address: '"0x609bdC6803B921dB36d8579FdD3204fa98F3D3Da"',
         throwComment_identityKeyExistsAndIsSignedByWallet:
           'Check that the identity key exists and is signed by the wallet private key',
         throwComment_preKeyExistsAndIsSignedByIdentity:
@@ -219,6 +219,14 @@ const MESSAGE_TEST_CASES: { [key: string]: TestCase } = {
       },
     },
   },
+  invalidContactBundleRejection: {
+    preconditions: {},
+    description: 'Confirms that invalid contact bundles (with various issues) are rejected correctly.",
+    input: {
+  inviteCreationValidation: {},
+  inviteOpeningValidation: {},
+  messageEncryptionValidation: {},
+  improperMessageEncryptionRejection: {},
 }
 
 // Language generators
