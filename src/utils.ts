@@ -8,11 +8,7 @@ const parser = require('any-date-parser')
 export const WALLET_FILE_LOCATION = './xmtp_wallet'
 
 export const randomWallet = (): Wallet => {
-  const key = PrivateKey.generate()
-  if (!key.secp256k1) {
-    throw new Error('invalid key')
-  }
-  return new Wallet(key.secp256k1.bytes)
+  return Wallet.createRandom()
 }
 
 export const saveRandomWallet = () => {
