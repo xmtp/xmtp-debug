@@ -18,9 +18,9 @@ export default async function intros(argv: {
   client: Client
   cmd: string
   address: string
-  long: boolean
+  full: boolean
 }) {
-  const { client, cmd, address, long } = argv
+  const { client, cmd, address, full } = argv
   let currentContact = await client.getUserContact(address)
   if (!currentContact) {
     throw new Error('No contact for address ${address}')
@@ -48,7 +48,7 @@ export default async function intros(argv: {
       await check(intros, currentContact)
       break
     case 'list':
-      await list(intros, !long)
+      await list(intros, !full)
       break
     default:
       console.log(`invalid command ${cmd}`)

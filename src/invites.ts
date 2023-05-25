@@ -8,7 +8,7 @@ import {
 import { toListOptions, truncateEthAddress } from './utils'
 
 export default async function invites(argv: any) {
-  const { client, cmd, address, long } = argv
+  const { client, cmd, address, full } = argv
   const invites = await client.listEnvelopes(
     buildUserInviteTopic(address),
     SealedInvitation.fromEnvelope,
@@ -16,7 +16,7 @@ export default async function invites(argv: any) {
   )
   switch (cmd) {
     case 'list':
-      await list(invites, !long)
+      await list(invites, !full)
       break
     default:
       console.log(`invalid command ${cmd}`)

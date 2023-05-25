@@ -51,7 +51,7 @@ export async function getContactsWithClient(
 }
 
 export default async function contacts(argv: any) {
-  const { client, cmd, address, long } = argv
+  const { client, cmd, address, full } = argv
   const contacts = await client.listEnvelopes(
     buildUserContactTopic(address),
     async (env: any) => {
@@ -69,7 +69,7 @@ export default async function contacts(argv: any) {
   )
   switch (cmd) {
     case 'list':
-      await list(contacts, !long)
+      await list(contacts, !full)
       break
     case 'check':
       await check(contacts)
