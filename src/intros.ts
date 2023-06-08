@@ -6,9 +6,9 @@ import {
   Client,
 } from '@xmtp/xmtp-js'
 // @ts-ignore
-import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
+import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js'
 // @ts-ignore
-import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
+import { MessageV1 } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions, truncateEthAddress } from './utils'

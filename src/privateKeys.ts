@@ -2,7 +2,7 @@ import {
   buildUserPrivateStoreTopic,
   nsToDate,
   // @ts-ignore
-} from '@xmtp/xmtp-js/dist/cjs/src/utils'
+} from '@xmtp/xmtp-js'
 import Long from 'long'
 import { toListOptions } from './utils'
 

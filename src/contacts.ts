@@ -3,11 +3,11 @@ import {
   buildUserContactTopic,
   nsToDate,
   // @ts-ignore
-} from '@xmtp/xmtp-js/dist/cjs/src/utils'
+} from '@xmtp/xmtp-js'
 // @ts-ignore
-import { decodeContactBundle } from '@xmtp/xmtp-js/dist/cjs/src/ContactBundle'
+import { decodeContactBundle } from '@xmtp/xmtp-js'
 // @ts-ignore
-import { bytesToHex } from '@xmtp/xmtp-js/dist/cjs/src/crypto/utils'
+import { bytesToHex } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions } from './utils'

@@ -1,6 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { ethers, Wallet, utils } from 'ethers'
-import { ListMessagesOptions, PrivateKey, SortDirection } from '@xmtp/xmtp-js'
+import { ListMessagesOptions, ListMessagesPaginatedOptions, SortDirection } from '@xmtp/xmtp-js'
+
+export const appVersion = "xmtp-debug"
 
 const parser = require('any-date-parser')
 
@@ -56,26 +58,47 @@ function resolvedAddress(address: string): string {
 }
 
 export function toListOptions(argv: any) {
+  const shouldLog = argv.cmd != "load"
   const options: ListMessagesOptions = {
     direction: argv.desc
       ? SortDirection.SORT_DIRECTION_DESCENDING
       : SortDirection.SORT_DIRECTION_ASCENDING,
   }
   if (argv.start) {
-    options.startTime = parseDate(argv.start, 'Starting on')
+    options.startTime = parseDate(argv.start, shouldLog ? 'Starting on' : undefined)
   }
   if (argv.end) {
-    options.endTime = parseDate(argv.end, 'Ending on')
+    options.endTime = parseDate(argv.end, shouldLog ? 'Ending on' : undefined)
   }
   if (argv.limit) {
-    console.log(`Limited to ${argv.limit}`)
+    if (shouldLog) console.log(`Limited to ${argv.limit}`)
     options.limit = argv.limit
+  }
+  return options
+}
+
+export function toPaginatedListOptions(argv: any) {
+  const shouldLog = argv.cmd != "load"
+  const options: ListMessagesPaginatedOptions = {
+    direction: argv.desc
+      ? SortDirection.SORT_DIRECTION_DESCENDING
+      : SortDirection.SORT_DIRECTION_ASCENDING,
+  }
+  if (argv.start) {
+    options.startTime = parseDate(argv.start, shouldLog ? 'Starting on' : undefined)
+  }
+  if (argv.end) {
+    options.endTime = parseDate(argv.end, shouldLog ? 'Ending on' : undefined)
+  }
+  if (argv.page) {
+    if (shouldLog) console.log(`Paging by ${argv.page}`)
+    options.pageSize = argv.page
   }
   return options
 }
 
 function parseDate(input: string, msg?: string) {
   const parsed = parser.fromString(input)
-  console.log(msg, parsed)
+  if (msg) console.log(msg, parsed)
   return parsed instanceof Date ? parsed : undefined
 }
