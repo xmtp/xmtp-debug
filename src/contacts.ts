@@ -1,4 +1,5 @@
 import { Client, SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
+import * as secp from '@noble/secp256k1'
 import {
   buildUserContactTopic,
   nsToDate,
@@ -7,7 +8,6 @@ import {
 // @ts-ignore
 import { decodeContactBundle } from '@xmtp/xmtp-js'
 // @ts-ignore
-import { bytesToHex } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions } from './utils'
@@ -94,10 +94,10 @@ async function list(contacts: Contact[], shouldTruncate = true) {
         : contact instanceof SignedPublicKeyBundle
         ? 'V2'
         : typeof contact
-    const identityKey = bytesToHex(
+    const identityKey = secp.utils.bytesToHex(
       contact.identityKey.secp256k1Uncompressed.bytes
     )
-    const preKey = bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
+    const preKey = secp.utils.bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
     rows.push({
       date: timestamp,
       type: type,
@@ -137,12 +137,12 @@ export function crosscheckContacts(
   const prodIdentityKeys = new Set<string>()
   for (const contact of devContacts) {
     devIdentityKeys.add(
-      bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
+      secp.utils.bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
     )
   }
   for (const contact of prodContacts) {
     prodIdentityKeys.add(
-      bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
+      secp.utils.bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
     )
   }
   const intersection = new Set(

@@ -2,7 +2,7 @@ import { SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
 // @ts-ignore
 import { sha256 } from '@xmtp/xmtp-js'
 // @ts-ignore
-import { bytesToHex } from '@xmtp/xmtp-js'
+import * as secp from '@noble/secp256k1'
 
 export function truncateHex(hex: string, shouldTruncate = true): string {
   if (!shouldTruncate) {
@@ -105,12 +105,12 @@ export async function verifyPreKeyV1(keybundle: PublicKeyBundle) {
   // Check that the prekey is signed by the identity key
   let digest = await sha256(preKey.bytesToSign())
   let recoveredKey = preKey.signature!.getPublicKey(digest)
-  const identityKeyHex = bytesToHex(identityKey.secp256k1Uncompressed.bytes)
+  const identityKeyHex = secp.utils.bytesToHex(identityKey.secp256k1Uncompressed.bytes)
   if (!recoveredKey) {
     errors.push('prekey_sig_bad_recovers_to_null')
     return errors
   }
-  const recoveredKeyHex = bytesToHex(recoveredKey!.secp256k1Uncompressed.bytes)
+  const recoveredKeyHex = secp.utils.bytesToHex(recoveredKey!.secp256k1Uncompressed.bytes)
   if (identityKeyHex !== recoveredKeyHex) {
     errors.push('prekey_not_signed_by_idkey')
   }
@@ -222,12 +222,12 @@ export async function verifyPreKeyV2(keybundle: SignedPublicKeyBundle) {
   // Check that the prekey is signed by the identity key
   let digest = await sha256(preKey.bytesToSign())
   let recoveredKey = preKey.signature!.getPublicKey(digest)
-  const identityKeyHex = bytesToHex(identityKey.secp256k1Uncompressed.bytes)
+  const identityKeyHex = secp.utils.bytesToHex(identityKey.secp256k1Uncompressed.bytes)
   if (!recoveredKey) {
     errors.push('prekey_sig_bad_recovers_to_null')
     return errors
   }
-  const recoveredKeyHex = bytesToHex(recoveredKey!.secp256k1Uncompressed.bytes)
+  const recoveredKeyHex = secp.utils.bytesToHex(recoveredKey!.secp256k1Uncompressed.bytes)
   if (identityKeyHex !== recoveredKeyHex) {
     errors.push('prekey_not_signed_by_idkey')
   }
