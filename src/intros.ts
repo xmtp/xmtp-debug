@@ -11,7 +11,7 @@ import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
-import { toListOptions, truncateEthAddress } from './utils'
+import { toListOptions, truncateEthAddress } from './utils.js'
 const { b64Decode } = fetcher
 
 export default async function intros(argv: {

@@ -1,16 +1,10 @@
 import { Client, SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
-import {
-  buildUserContactTopic,
-  nsToDate,
-  // @ts-ignore
-} from '@xmtp/xmtp-js/dist/cjs/src/utils'
-// @ts-ignore
-import { decodeContactBundle } from '@xmtp/xmtp-js/dist/cjs/src/ContactBundle'
-// @ts-ignore
-import { bytesToHex } from '@xmtp/xmtp-js/dist/cjs/src/crypto/utils'
+import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js'
+import { decodeContactBundle } from '@xmtp/xmtp-js'
+import { bytesToHex } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
-import { toListOptions } from './utils'
+import { toListOptions } from './utils.js'
 const { b64Decode } = fetcher
 import {
   truncateHex,
@@ -20,7 +14,7 @@ import {
   verifyIdentityKeyV2,
   verifyIdentityKeySignatureV2,
   verifyPreKeyV2,
-} from './verify_utils'
+} from './verify_utils.js'
 
 type Contact = {
   timestamp: Date

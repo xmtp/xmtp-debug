@@ -5,7 +5,7 @@ import {
   nsToDate,
   // @ts-ignore
 } from '@xmtp/xmtp-js/dist/cjs/src/utils'
-import { toListOptions, truncateEthAddress } from './utils'
+import { toListOptions, truncateEthAddress } from './utils.js'
 
 export default async function invites(argv: any) {
   const { client, cmd, address, full } = argv

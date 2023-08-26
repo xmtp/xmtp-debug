@@ -1,5 +1,6 @@
 import { Client } from '@xmtp/xmtp-js'
-import { randomWallet, resolveAddress } from './utils'
+import { randomWallet, resolveAddress } from './utils.js'
+import { GrpcApiClient } from '@xmtp/grpc-api-client'
 
 export default async function fillInvites(argv: any) {
   const { env, address: rawAddress, numInvites, numMessagesPerConvo } = argv
@@ -10,11 +11,11 @@ export default async function fillInvites(argv: any) {
 
   await Promise.all(
     Array.from({ length: numInvites }, async (_, i) => {
-      const client = await Client.create(randomWallet(), { env })
-      const convo = await client.conversations.newConversation(address, {
-        conversationId: `xmtp.org/test/${i}`,
-        metadata: {},
+      const client = await Client.create(randomWallet(), {
+        env,
+        apiClientFactory: GrpcApiClient.fromOptions,
       })
+      const convo = await client.conversations.newConversation(address)
       for (let j = 0; j < numMessagesPerConvo; j++) {
         await convo.send(`gm ${j}`)
       }

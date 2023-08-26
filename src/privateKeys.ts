@@ -4,7 +4,7 @@ import {
   // @ts-ignore
 } from '@xmtp/xmtp-js/dist/cjs/src/utils'
 import Long from 'long'
-import { toListOptions } from './utils'
+import { toListOptions } from './utils.js'
 
 export default async function privateKeys(argv: any) {
   const { client, address } = argv

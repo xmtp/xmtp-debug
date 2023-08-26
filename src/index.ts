@@ -1,4 +1,4 @@
-import yargs, { number } from 'yargs'
+import yargs, { Arguments } from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import { Client } from '@xmtp/xmtp-js'
 import {
@@ -7,13 +7,13 @@ import {
   resolveAddress,
   WALLET_FILE_LOCATION,
   randomWallet,
-} from './utils'
-import intros from './intros'
-import contacts from './contacts'
-import privateKeys from './privateKeys'
-import invites from './invites'
-import fillConversationList from './fillConversationList'
-import crosscheck from './crosscheck'
+} from './utils.js'
+import intros from './intros.js'
+import contacts from './contacts.js'
+import privateKeys from './privateKeys.js'
+import invites from './invites.js'
+import fillConversationList from './fillConversationList.js'
+import crosscheck from './crosscheck.js'
 
 yargs(hideBin(process.argv))
   .scriptName(`npm start`)
@@ -32,7 +32,7 @@ yargs(hideBin(process.argv))
       cmd: { type: 'string', choices: ['check', 'list'], default: 'list' },
       address: { type: 'string' },
     },
-    async (argv: yargs.Arguments) => {
+    async (argv: Arguments) => {
       await intros(await resolve(argv))
     }
   )
