@@ -1,10 +1,4 @@
-// @ts-ignore
-import { SealedInvitation } from '@xmtp/xmtp-js/dist/cjs/src/Invitation'
-import {
-  buildUserInviteTopic,
-  nsToDate,
-  // @ts-ignore
-} from '@xmtp/xmtp-js/dist/cjs/src/utils'
+import { SealedInvitation, buildUserInviteTopic, nsToDate } from '@xmtp/xmtp-js'
 import { toListOptions, truncateEthAddress } from './utils.js'
 
 export default async function invites(argv: any) {
@@ -26,7 +20,11 @@ export default async function invites(argv: any) {
 async function list(invites: SealedInvitation[], truncate = true) {
   let rows = []
   for (const invite of invites) {
-    const header = invite.v1.header
+    const header = invite?.v1?.header
+    if (!header) {
+      console.warn('No header')
+      continue
+    }
     rows.push({
       date: nsToDate(header.createdNs),
       sender: truncateEthAddress(

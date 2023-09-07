@@ -6,7 +6,6 @@ import {
   saveRandomWallet,
   resolveAddress,
   WALLET_FILE_LOCATION,
-  randomWallet,
 } from './utils.js'
 import intros from './intros.js'
 import contacts from './contacts.js'
@@ -99,7 +98,7 @@ yargs(hideBin(process.argv))
       numMessagesPerConvo: { type: 'number', default: 0 },
     },
     async (argv) => {
-      await fillConversationList(argv)
+      await fillConversationList(await resolve(argv))
     }
   )
   .example(

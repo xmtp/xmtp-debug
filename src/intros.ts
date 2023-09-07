@@ -1,14 +1,11 @@
 import {
-  SortDirection,
   PublicKey,
   PublicKeyBundle,
   SignedPublicKeyBundle,
   Client,
 } from '@xmtp/xmtp-js'
-// @ts-ignore
-import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js/dist/cjs/src/utils'
-// @ts-ignore
-import { MessageV1 } from '@xmtp/xmtp-js/dist/cjs/src/Message'
+import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js'
+import { MessageV1 } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions, truncateEthAddress } from './utils.js'

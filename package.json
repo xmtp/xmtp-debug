@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "xmtp": "node ./dist/index.js"
+    "xmtp-debug": "node ./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/xmtp/xmtp-debug/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "homepage": "https://github.com/xmtp/xmtp-debug#readme",
   "devDependencies": {
@@ -34,7 +37,7 @@
   },
   "dependencies": {
     "@xmtp/proto": "3.28.0-beta.1",
-    "@xmtp/xmtp-js": "^11.0.0-beta.2",
+    "@xmtp/xmtp-js": "^11.0.0-beta.8",
     "any-date-parser": "^1.5.3",
     "ethers": "^5.7.2",
     "long": "^5.2.3",

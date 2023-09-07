@@ -1,8 +1,5 @@
 import { SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
-// @ts-ignore
-import { sha256 } from '@xmtp/xmtp-js/dist/cjs/src/crypto/encryption'
-// @ts-ignore
-import { bytesToHex } from '@xmtp/xmtp-js/dist/cjs/src/crypto/utils'
+import { bytesToHex, sha256 } from './utils.js'
 
 export function truncateHex(hex: string, shouldTruncate = true): string {
   if (!shouldTruncate) {

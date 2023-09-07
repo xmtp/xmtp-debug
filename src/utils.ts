@@ -1,8 +1,10 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { ethers, Wallet, utils } from 'ethers'
+import * as crypto from 'node:crypto'
 import { ListMessagesOptions, PrivateKey, SortDirection } from '@xmtp/xmtp-js'
-
-const parser = require('any-date-parser')
+import * as secp from '@noble/secp256k1'
+// @ts-ignore
+import parser from 'any-date-parser'
 
 // Make sure this is in .gitignore
 export const WALLET_FILE_LOCATION = './xmtp_wallet'
@@ -82,4 +84,28 @@ function parseDate(input: string, msg?: string) {
   const parsed = parser.fromString(input)
   console.log(msg, parsed)
   return parsed instanceof Date ? parsed : undefined
+}
+
+export function bytesToHex(bytes: Uint8Array) {
+  return secp.utils.bytesToHex(bytes)
+}
+
+export async function sha256(bytes: Uint8Array): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))
+}
+
+export function chunkArray<T>(
+  arr: Array<T>,
+  chunkSize: number
+): Array<Array<T>> {
+  const out = []
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize)
+    out.push(chunk)
+  }
+  return out
+}
+
+export async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
