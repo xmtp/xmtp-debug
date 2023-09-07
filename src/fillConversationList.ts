@@ -7,6 +7,8 @@ type FillInvitesArgs = BaseResolvedArgs & {
   numMessagesPerConvo: number
 }
 
+const wafLimitPeriodMs = 300000 // 5 min
+
 const CHUNK_SIZE = 100
 
 export default async function fillInvites(argv: FillInvitesArgs) {
@@ -31,13 +33,18 @@ export default async function fillInvites(argv: FillInvitesArgs) {
     await Promise.all(
       chunk.map(async (i, chunkIndex) => {
         const client = clients[chunkIndex]
-        const convo = await client.conversations.newConversation(address, {
-          conversationId: `${runPrefix}-${i}`,
-          metadata: {}
-        })
-
-        for (let j = 0; j < numMessagesPerConvo; j++) {
-          await convo.send(`gm ${j}`)
+        try {
+          const convo = await client.conversations.newConversation(address, {
+            conversationId: `${runPrefix}-${i}`,
+            metadata: {}
+          })
+  
+          for (let j = 0; j < numMessagesPerConvo; j++) {
+            await convo.send(`gm ${j}`)
+          }
+        } catch (e) {
+          console.log(`Error creating conversation ${i}: ${e}. Sleeping for ${wafLimitPeriodMs}ms`)
+          await sleep(wafLimitPeriodMs)
         }
       })
     )
