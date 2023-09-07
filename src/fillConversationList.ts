@@ -7,7 +7,7 @@ type FillInvitesArgs = BaseResolvedArgs & {
   numMessagesPerConvo: number
 }
 
-const wafLimitPeriodMs = 300000 // 5 min
+const WAF_LIMIT_PERIOD_MS = 300000 // 5 min
 
 const CHUNK_SIZE = 100
 
@@ -43,8 +43,8 @@ export default async function fillInvites(argv: FillInvitesArgs) {
             await convo.send(`gm ${j}`)
           }
         } catch (e) {
-          console.log(`Error creating conversation ${i}: ${e}. Sleeping for ${wafLimitPeriodMs}ms`)
-          await sleep(wafLimitPeriodMs)
+          console.log(`Error creating conversation ${i}: ${e}. Sleeping for ${WAF_LIMIT_PERIOD_MS}ms`)
+          await sleep(WAF_LIMIT_PERIOD_MS)
         }
       })
     )
