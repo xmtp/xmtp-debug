@@ -14,12 +14,14 @@ import invites from './invites.js'
 import fillConversationList from './fillConversationList.js'
 import crosscheck from './crosscheck.js'
 
+const appVersion = `xmtp-debug/0.0.1`
+
 yargs(hideBin(process.argv))
   .scriptName(`npm start`)
   .command('init', 'initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     saveRandomWallet()
-    const client = await Client.create(loadWallet(), { env })
+    const client = await Client.create(loadWallet(), { env, appVersion })
     console.log(
       `New wallet with address ${client.address} saved at ${WALLET_FILE_LOCATION}`
     )
@@ -44,11 +46,13 @@ yargs(hideBin(process.argv))
     'list last 10 introduction messages for xmtp.eth in descending order'
   )
   .command(
-    'invites [cmd] [address]',
-    'list/check introductions for the address',
+    'invites [cmd] [address] [batchSize] [batchCount]',
+    'list/check/load repeatedly introductions for the address',
     {
-      cmd: { type: 'string', choices: ['check', 'list'], default: 'list' },
+      cmd: { type: 'string', choices: ['check', 'list', 'load'], default: 'list' },
       address: { type: 'string' },
+      batchSize: { type: 'number', default: 0 },
+      batchCount: { type: 'number', default: 0 },
     },
     async (argv: any) => {
       await invites(await resolve(argv))
@@ -90,8 +94,7 @@ yargs(hideBin(process.argv))
   .command(
     'fill-conversation-list [address] [numInvites] [numMessagesPerConvo]',
     `Fill the targeted address with the specified number of conversation invites.
-    
-    (numInvites * 3) + (numInvites * numMessagesPerConvo) should be < 1000 to avoid rate limiting`,
+    The process will pace itself to avoid rate limiting`,
     {
       address: { type: 'string' },
       numInvites: { type: 'number' },
@@ -157,6 +160,11 @@ yargs(hideBin(process.argv))
     type: 'boolean',
     description: 'sort output in descending order',
   })
+  .option('page', {
+    alias: 'p',
+    type: 'number',
+    description: 'page through the query results <page> entries at a time',
+  })
   // all options can be passed in as env vars prefixed with XMTP_
   .env('XMTP')
   // log the network environment used
@@ -166,15 +174,15 @@ yargs(hideBin(process.argv))
 
 async function resolve(argv: any) {
   const { env, address } = argv
-  argv.client = await Client.create(loadWallet(), { env })
+  argv.client = await Client.create(loadWallet(), { env, appVersion })
   argv.address = await resolveAddress(address)
   return argv
 }
 
 async function resolveEnvAgnostic(argv: any) {
   const { address } = argv
-  argv.prodClient = await Client.create(loadWallet(), { env: 'production' })
-  argv.devClient = await Client.create(loadWallet(), { env: 'dev' })
+  argv.prodClient = await Client.create(loadWallet(), { env: 'production', appVersion })
+  argv.devClient = await Client.create(loadWallet(), { env: 'dev', appVersion })
   argv.address = await resolveAddress(address)
   return argv
 }
