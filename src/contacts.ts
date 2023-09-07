@@ -1,16 +1,9 @@
 import { Client, SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
-import * as secp from '@noble/secp256k1'
-import {
-  buildUserContactTopic,
-  nsToDate,
-  // @ts-ignore
-} from '@xmtp/xmtp-js'
-// @ts-ignore
+import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js'
 import { decodeContactBundle } from '@xmtp/xmtp-js'
-// @ts-ignore
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
-import { toListOptions } from './utils'
+import { toListOptions, bytesToHex } from './utils.js'
 const { b64Decode } = fetcher
 import {
   truncateHex,
@@ -20,7 +13,7 @@ import {
   verifyIdentityKeyV2,
   verifyIdentityKeySignatureV2,
   verifyPreKeyV2,
-} from './verify_utils'
+} from './verify_utils.js'
 
 type Contact = {
   timestamp: Date
@@ -94,10 +87,10 @@ async function list(contacts: Contact[], shouldTruncate = true) {
         : contact instanceof SignedPublicKeyBundle
         ? 'V2'
         : typeof contact
-    const identityKey = secp.utils.bytesToHex(
+    const identityKey = bytesToHex(
       contact.identityKey.secp256k1Uncompressed.bytes
     )
-    const preKey = secp.utils.bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
+    const preKey = bytesToHex(contact.preKey.secp256k1Uncompressed.bytes)
     rows.push({
       date: timestamp,
       type: type,
@@ -137,12 +130,12 @@ export function crosscheckContacts(
   const prodIdentityKeys = new Set<string>()
   for (const contact of devContacts) {
     devIdentityKeys.add(
-      secp.utils.bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
+      bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
     )
   }
   for (const contact of prodContacts) {
     prodIdentityKeys.add(
-      secp.utils.bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
+      bytesToHex(contact.contact.identityKey.secp256k1Uncompressed.bytes)
     )
   }
   const intersection = new Set(

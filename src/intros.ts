@@ -1,17 +1,14 @@
 import {
-  SortDirection,
   PublicKey,
   PublicKeyBundle,
   SignedPublicKeyBundle,
   Client,
 } from '@xmtp/xmtp-js'
-// @ts-ignore
 import { buildUserIntroTopic, nsToDate } from '@xmtp/xmtp-js'
-// @ts-ignore
 import { MessageV1 } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
-import { toListOptions, truncateEthAddress } from './utils'
+import { toListOptions, truncateEthAddress } from './utils.js'
 const { b64Decode } = fetcher
 
 export default async function intros(argv: {

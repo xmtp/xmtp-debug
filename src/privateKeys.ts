@@ -1,10 +1,6 @@
-import {
-  buildUserPrivateStoreTopic,
-  nsToDate,
-  // @ts-ignore
-} from '@xmtp/xmtp-js'
+import { buildUserPrivateStoreTopic, nsToDate } from '@xmtp/xmtp-js'
 import Long from 'long'
-import { toListOptions } from './utils'
+import { toListOptions } from './utils.js'
 
 export default async function privateKeys(argv: any) {
   const { client, address } = argv

@@ -1,16 +1,20 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { ethers, Wallet, utils } from 'ethers'
-import { ListMessagesOptions, ListMessagesPaginatedOptions, SortDirection } from '@xmtp/xmtp-js'
-
-export const appVersion = "xmtp-debug"
-
-const parser = require('any-date-parser')
+import * as crypto from 'node:crypto'
+import { ListMessagesOptions, ListMessagesPaginatedOptions, PrivateKey, SortDirection } from '@xmtp/xmtp-js'
+import * as secp from '@noble/secp256k1'
+// @ts-ignore
+import parser from 'any-date-parser'
 
 // Make sure this is in .gitignore
 export const WALLET_FILE_LOCATION = './xmtp_wallet'
 
 export const randomWallet = (): Wallet => {
-  return Wallet.createRandom()
+  const key = PrivateKey.generate()
+  if (!key.secp256k1) {
+    throw new Error('invalid key')
+  }
+  return new Wallet(key.secp256k1.bytes)
 }
 
 export const saveRandomWallet = () => {
@@ -101,4 +105,28 @@ function parseDate(input: string, msg?: string) {
   const parsed = parser.fromString(input)
   if (msg) console.log(msg, parsed)
   return parsed instanceof Date ? parsed : undefined
+}
+
+export function bytesToHex(bytes: Uint8Array) {
+  return secp.utils.bytesToHex(bytes)
+}
+
+export async function sha256(bytes: Uint8Array): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))
+}
+
+export function chunkArray<T>(
+  arr: Array<T>,
+  chunkSize: number
+): Array<Array<T>> {
+  const out = []
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize)
+    out.push(chunk)
+  }
+  return out
+}
+
+export async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

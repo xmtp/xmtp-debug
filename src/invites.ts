@@ -1,11 +1,6 @@
-// @ts-ignore
-import { SealedInvitation } from '@xmtp/xmtp-js'
-import {
-  buildUserInviteTopic,
-  nsToDate,
-  // @ts-ignore
-} from '@xmtp/xmtp-js'
-import { toListOptions, toPaginatedListOptions, truncateEthAddress } from './utils'
+import { SealedInvitation, buildUserInviteTopic, nsToDate } from '@xmtp/xmtp-js'
+import { toListOptions, toPaginatedListOptions, truncateEthAddress } from './utils.js'
+
 
 export default async function invites(argv: any) {
   const { client, cmd, address, full, page, batchSize, batchCount } = argv

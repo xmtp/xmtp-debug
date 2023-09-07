@@ -1,4 +1,8 @@
-import { getContactsWithClient, crosscheckContacts, verify } from './contacts'
+import {
+  getContactsWithClient,
+  crosscheckContacts,
+  verify,
+} from './contacts.js'
 
 export default async function crosscheck(argv: any) {
   // Expect devClient, prodClient

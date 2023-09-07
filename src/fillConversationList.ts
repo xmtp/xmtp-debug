@@ -1,41 +1,55 @@
 import { Client } from '@xmtp/xmtp-js'
-import { randomWallet, resolveAddress, appVersion } from './utils'
+import { randomWallet, chunkArray, sleep } from './utils.js'
+import { BaseResolvedArgs } from './types.js'
 
-// See rule "publish" in https://github.com/xmtp-labs/infrastructure/blob/main/plans/production/public_load_balancer.tf
-const wafLimit = 1000 // publish calls per IP
-const wafLimitPeriodMs = 300000 // 5 min
-const nonMessageCallsPerConvo = 5 // 2 * invite + 2 * contact + 1 * private key bundle
+type FillInvitesArgs = BaseResolvedArgs & {
+  numInvites: number
+  numMessagesPerConvo: number
+}
 
-export default async function fillInvites(argv: any) {
-  const { env, address: rawAddress, numInvites, numMessagesPerConvo } = argv
-  const address = await resolveAddress(rawAddress)
+const WAF_LIMIT_PERIOD_MS = 300000 // 5 min
+
+const CHUNK_SIZE = 100
+
+export default async function fillInvites(argv: FillInvitesArgs) {
+  const { env, address, numInvites, numMessagesPerConvo } = argv
   console.log(
-    `Sending ${numInvites} invites to ${address} and sending ${numMessagesPerConvo} messages per invite`
+    `Creating ${numInvites} conversations with ${address} and sending ${numMessagesPerConvo} messages per conversation`
   )
-  const batchSize = wafLimit / (numMessagesPerConvo + nonMessageCallsPerConvo)
-  let remaining = numInvites
-  while (remaining > 0) {
-    const batch = remaining < batchSize ? remaining : batchSize
-    remaining -= batch
-    const start = Date.now()
+
+  const allRequests = [...new Array(numInvites).keys()]
+  const chunked = chunkArray(allRequests, CHUNK_SIZE)
+
+  // Create one client for each item in the chunk so that there is no contention on mutexes
+  const clients = await Promise.all([...new Array(CHUNK_SIZE).keys()].map(() => Client.create(randomWallet(), {
+    env,
+    skipContactPublishing: true,
+    appVersion: 'xmtp-debug/0.0.0',
+  })))
+
+  const runPrefix = `run-${Math.floor(Math.random() * 100000)}`
+  let totalSent = 0
+  for (const chunk of chunked) {
     await Promise.all(
-      Array.from({ length: batch }, async (_, i) => {
-        const client = await Client.create(randomWallet(), { env, appVersion })
-        const convo = await client.conversations.newConversation(address, {
-          conversationId: `xmtp.org/test/${remaining+i}`,
-          metadata: {},
-        })
-        for (let j = 0; j < numMessagesPerConvo; j++) {
-          await convo.send(`gm ${j}`)
+      chunk.map(async (i, chunkIndex) => {
+        const client = clients[chunkIndex]
+        try {
+          const convo = await client.conversations.newConversation(address, {
+            conversationId: `${runPrefix}-${i}`,
+            metadata: {}
+          })
+  
+          for (let j = 0; j < numMessagesPerConvo; j++) {
+            await convo.send(`gm ${j}`)
+          }
+        } catch (e) {
+          console.log(`Error creating conversation ${i}: ${e}. Sleeping for ${WAF_LIMIT_PERIOD_MS}ms`)
+          await sleep(WAF_LIMIT_PERIOD_MS)
         }
       })
     )
-    console.log(`Created ${batch} conversations`)
-    if (remaining > 0) {
-      // wait until the WAF limit 1000 publishes / 5 min expires
-      const delay = start - Date.now() + wafLimitPeriodMs
-      console.log(`Waiting ${delay} ms for the next WAF limit window`)
-      await new Promise((resolve) => setTimeout(() => resolve(null), delay))
-    }
+    totalSent += chunk.length
+    console.log(`Created ${totalSent} conversations`)
+    await sleep(1000)
   }
 }
