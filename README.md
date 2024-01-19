@@ -114,13 +114,11 @@ List the last 10 introduction messages for `xmtp.eth` in descending order:
 npm start -- -d -l10 intros list xmtp.eth
 ```
 
-
 Check all contacts of `xmtp.eth` for anomalies on the production network:
 
 ```sh
 npm start -- -e=production contacts check xmtp.eth
 ```
-
 
 Start 10 conversations with `xmtp.eth` and send one message per conversation:
 
@@ -145,13 +143,9 @@ npm start contacts list
 npm start intros list
 ```
 
-
-
 ### Example Output
 
 Running the command below will produce an output similar to the following:
-
-
 
 ```
 xmtp-debug % npm start --silent -- --env=production --end='3 weeks ago' --desc --limit=3 contacts list hi.xmtp.eth
@@ -166,4 +160,10 @@ Limited to 3
 │    1    │ 2022-10-28T18:24:13.305Z │ 'V1' │ '044f…7b1a' │ '04d2…4f8c' │
 │    2    │ 2022-10-28T18:14:20.502Z │ 'V1' │ '044f…7b1a' │ '04d2…4f8c' │
 └─────────┴──────────────────────────┴──────┴─────────────┴─────────────┘
+```
+
+```
+
+npm start intros list 0x829510E9b6a3b6e8DCf906e846d3bFB6B9FB1D89
+
 ```
