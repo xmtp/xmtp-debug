@@ -10,21 +10,20 @@ import parser from 'any-date-parser'
 export const WALLET_FILE_LOCATION = './xmtp_wallet'
 
 export const randomWallet = (): Wallet => {
-  const key = PrivateKey.generate()
-  if (!key.secp256k1) {
-    throw new Error('invalid key')
-  }
-  return new Wallet(key.secp256k1.bytes)
+  return Wallet.createRandom()
 }
 
 export const saveRandomWallet = () => {
   const newWallet = randomWallet()
-  writeFileSync(WALLET_FILE_LOCATION, newWallet.mnemonic.phrase)
+  console.log(`Saving new wallet to ${WALLET_FILE_LOCATION}`)
+  writeFileSync(WALLET_FILE_LOCATION, newWallet.privateKey)
 }
+
 export const loadWallet = () => {
   try {
     const existing = readFileSync(WALLET_FILE_LOCATION)
-    return Wallet.fromMnemonic(existing.toString())
+    const privateKey = existing.toString().trim()
+    return new ethers.Wallet(privateKey)
   } catch (e) {
     throw new Error('No wallet file found')
   }
