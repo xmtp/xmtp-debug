@@ -62,5 +62,4 @@ dist
 # Don't commit cached wallet keys!
 xmtp_wallet
 bun.lockb
-DS_Store
 .DS_Store
