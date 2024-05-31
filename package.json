@@ -25,15 +25,15 @@
     "url": "https://github.com/xmtp/xmtp-debug/issues"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.19"
   },
   "homepage": "https://github.com/xmtp/xmtp-debug#readme",
   "devDependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.19.33",
     "@types/yargs": "^17.0.13",
-    "eslint": "^8.27.0",
-    "prettier": "^2.7.1",
-    "typescript": "^4.9.5"
+    "eslint": "^9.4.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "@xmtp/proto": "3.54.0",
