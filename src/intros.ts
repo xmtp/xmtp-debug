@@ -9,7 +9,6 @@ import { MessageV1 } from '@xmtp/xmtp-js'
 import Long from 'long'
 import { fetcher } from '@xmtp/proto'
 import { toListOptions, truncateEthAddress } from './utils.js'
-const { b64Decode } = fetcher
 
 export default async function intros(argv: {
   client: Client
@@ -33,9 +32,7 @@ export default async function intros(argv: {
       }
       return {
         timestamp: nsToDate(Long.fromString(env.timestampNs as string)),
-        message: await MessageV1.fromBytes(
-          b64Decode(env.message as unknown as string)
-        ),
+        message: await MessageV1.fromBytes(env.message),
       }
     },
     toListOptions(argv)

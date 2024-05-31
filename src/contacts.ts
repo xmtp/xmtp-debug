@@ -2,9 +2,7 @@ import { Client, SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
 import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js'
 import { decodeContactBundle } from '@xmtp/xmtp-js'
 import Long from 'long'
-import { fetcher } from '@xmtp/proto'
 import { toListOptions, bytesToHex } from './utils.js'
-const { b64Decode } = fetcher
 import {
   truncateHex,
   verifyIdentityKeyV1,
@@ -34,7 +32,7 @@ export async function getContactsWithClient(
       return {
         timestamp: nsToDate(Long.fromString(env.timestampNs as string)),
         contact: decodeContactBundle(
-          b64Decode(env.message as unknown as string)
+          env.message
         ),
       }
     },
@@ -54,7 +52,7 @@ export default async function contacts(argv: any) {
       return {
         timestamp: nsToDate(Long.fromString(env.timestampNs as string)),
         contact: decodeContactBundle(
-          b64Decode(env.message as unknown as string)
+          env.message
         ),
       }
     },

@@ -21,11 +21,15 @@ export default async function fillInvites(argv: FillInvitesArgs) {
   const chunked = chunkArray(allRequests, CHUNK_SIZE)
 
   // Create one client for each item in the chunk so that there is no contention on mutexes
-  const clients = await Promise.all([...new Array(CHUNK_SIZE).keys()].map(() => Client.create(randomWallet(), {
-    env,
-    skipContactPublishing: true,
-    appVersion: 'xmtp-debug/0.0.0',
-  })))
+  const clients = await Promise.all(
+    [...new Array(CHUNK_SIZE).keys()].map(() =>
+      Client.create(randomWallet(), {
+        env,
+        skipContactPublishing: true,
+        appVersion: 'xmtp-debug/0.0.0',
+      })
+    )
+  )
 
   const runPrefix = `run-${Math.floor(Math.random() * 100000)}`
   let totalSent = 0
@@ -36,14 +40,16 @@ export default async function fillInvites(argv: FillInvitesArgs) {
         try {
           const convo = await client.conversations.newConversation(address, {
             conversationId: `${runPrefix}-${i}`,
-            metadata: {}
+            metadata: {},
           })
-  
+
           for (let j = 0; j < numMessagesPerConvo; j++) {
             await convo.send(`gm ${j}`)
           }
         } catch (e) {
-          console.log(`Error creating conversation ${i}: ${e}. Sleeping for ${WAF_LIMIT_PERIOD_MS}ms`)
+          console.log(
+            `Error creating conversation ${i}: ${e}. Sleeping for ${WAF_LIMIT_PERIOD_MS}ms`
+          )
           await sleep(WAF_LIMIT_PERIOD_MS)
         }
       })
