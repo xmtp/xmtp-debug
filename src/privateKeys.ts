@@ -7,7 +7,10 @@ export default async function privateKeys(argv: any) {
   const timestamps = await client.listEnvelopes(
     buildUserPrivateStoreTopic(`${address}/key_bundle`),
     async (env: any) => {
-      return { date: nsToDate(Long.fromString(env.timestampNs as string)), hash: Buffer.from(await sha256(env.message)).toString('hex') }
+      return {
+        date: nsToDate(Long.fromString(env.timestampNs as string)),
+        hash: Buffer.from(await sha256(env.message)).toString('hex'),
+      }
     },
     toListOptions(argv)
   )

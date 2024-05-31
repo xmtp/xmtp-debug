@@ -2,9 +2,7 @@ import { Client, SignedPublicKeyBundle, PublicKeyBundle } from '@xmtp/xmtp-js'
 import { buildUserContactTopic, nsToDate } from '@xmtp/xmtp-js'
 import { decodeContactBundle } from '@xmtp/xmtp-js'
 import Long from 'long'
-import { fetcher } from '@xmtp/proto'
 import { toListOptions, bytesToHex } from './utils.js'
-const { b64Decode } = fetcher
 import {
   truncateHex,
   verifyIdentityKeyV1,
