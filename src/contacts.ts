@@ -33,9 +33,7 @@ export async function getContactsWithClient(
       }
       return {
         timestamp: nsToDate(Long.fromString(env.timestampNs as string)),
-        contact: decodeContactBundle(
-          b64Decode(env.message as unknown as string)
-        ),
+        contact: decodeContactBundle(env.message),
       }
     },
     toListOptions(argv)
@@ -53,9 +51,7 @@ export default async function contacts(argv: any) {
       }
       return {
         timestamp: nsToDate(Long.fromString(env.timestampNs as string)),
-        contact: decodeContactBundle(
-          b64Decode(env.message as unknown as string)
-        ),
+        contact: decodeContactBundle(env.message),
       }
     },
     toListOptions(argv)
