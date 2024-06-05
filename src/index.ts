@@ -49,7 +49,11 @@ yargs(hideBin(process.argv))
     'invites [cmd] [address] [batchSize] [batchCount]',
     'list/check/load repeatedly introductions for the address',
     {
-      cmd: { type: 'string', choices: ['check', 'list', 'load'], default: 'list' },
+      cmd: {
+        type: 'string',
+        choices: ['check', 'list', 'load'],
+        default: 'list',
+      },
       address: { type: 'string' },
       batchSize: { type: 'number', default: 0 },
       batchCount: { type: 'number', default: 0 },
@@ -181,7 +185,10 @@ async function resolve(argv: any) {
 
 async function resolveEnvAgnostic(argv: any) {
   const { address } = argv
-  argv.prodClient = await Client.create(loadWallet(), { env: 'production', appVersion })
+  argv.prodClient = await Client.create(loadWallet(), {
+    env: 'production',
+    appVersion,
+  })
   argv.devClient = await Client.create(loadWallet(), { env: 'dev', appVersion })
   argv.address = await resolveAddress(address)
   return argv

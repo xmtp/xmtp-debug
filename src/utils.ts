@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { ethers, Wallet, utils } from 'ethers'
 import * as crypto from 'node:crypto'
-import { ListMessagesOptions, ListMessagesPaginatedOptions, PrivateKey, SortDirection } from '@xmtp/xmtp-js'
+import {
+  ListMessagesOptions,
+  ListMessagesPaginatedOptions,
+  PrivateKey,
+  SortDirection,
+} from '@xmtp/xmtp-js'
 import * as secp from '@noble/secp256k1'
 // @ts-ignore
 import parser from 'any-date-parser'
@@ -58,14 +63,17 @@ function resolvedAddress(address: string): string {
 }
 
 export function toListOptions(argv: any) {
-  const shouldLog = argv.cmd != "load"
+  const shouldLog = argv.cmd != 'load'
   const options: ListMessagesOptions = {
     direction: argv.desc
       ? SortDirection.SORT_DIRECTION_DESCENDING
       : SortDirection.SORT_DIRECTION_ASCENDING,
   }
   if (argv.start) {
-    options.startTime = parseDate(argv.start, shouldLog ? 'Starting on' : undefined)
+    options.startTime = parseDate(
+      argv.start,
+      shouldLog ? 'Starting on' : undefined
+    )
   }
   if (argv.end) {
     options.endTime = parseDate(argv.end, shouldLog ? 'Ending on' : undefined)
@@ -78,14 +86,17 @@ export function toListOptions(argv: any) {
 }
 
 export function toPaginatedListOptions(argv: any) {
-  const shouldLog = argv.cmd != "load"
+  const shouldLog = argv.cmd != 'load'
   const options: ListMessagesPaginatedOptions = {
     direction: argv.desc
       ? SortDirection.SORT_DIRECTION_DESCENDING
       : SortDirection.SORT_DIRECTION_ASCENDING,
   }
   if (argv.start) {
-    options.startTime = parseDate(argv.start, shouldLog ? 'Starting on' : undefined)
+    options.startTime = parseDate(
+      argv.start,
+      shouldLog ? 'Starting on' : undefined
+    )
   }
   if (argv.end) {
     options.endTime = parseDate(argv.end, shouldLog ? 'Ending on' : undefined)
