@@ -1,3 +1,14 @@
+![Status](https://img.shields.io/badge/Deprecated-brown)
+
+> [!CAUTION]
+> This repo is no longer maintained.
+
+For your project, consider using [xmtp_debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md) in the LibXMTP repo instead.
+
+The documentation below is provided for historical reference only.
+
+---
+
 Simple CLI tool for inspecting data on XMTP networks.
 
 To understand what you are inspecting please refer to https://xmtp.org/docs/dev-concepts/architectural-overview.
