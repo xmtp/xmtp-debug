@@ -80,7 +80,7 @@ Note that the options can also be set from environment variables prefixed with `
 
 ```sh
 $ export XMTP_ADDRESS=xmtp.eth
-$ export XMPT_ENV=production
+$ export XMTP_ENV=production
 $ npm start contacts list
 $ npm start intros list
 $ ...
